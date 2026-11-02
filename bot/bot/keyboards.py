@@ -38,6 +38,29 @@ def back_to_menu() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
+def admin_menu() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(text="🎁 Выдать подписку", callback_data="admin:grant")
+    builder.button(text="📊 Статистика", callback_data="admin:stats")
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def admin_grant_days_menu() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    for plan in PLANS:
+        builder.button(text=f"{plan.title} ({plan.days} дн.)", callback_data=f"admin:days:{plan.days}")
+    builder.button(text="❌ Отмена", callback_data="admin:cancel")
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def admin_cancel_menu() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(text="❌ Отмена", callback_data="admin:cancel")
+    return builder.as_markup()
+
+
 def legal_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(text="🔒 Политика конфиденциальности", url=PRIVACY_POLICY_URL)

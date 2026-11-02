@@ -51,6 +51,41 @@ STATS = (
     "Выручка (Stars): {stars_revenue} ⭐"
 )
 
+ADMIN_MENU = "🛠 Админ-панель"
+
+ADMIN_GRANT_ASK_USER = (
+    "Кому выдать подписку? Пришли Telegram ID (число) или @username.\n\n"
+    "По @username найдутся только те, кто уже запускал бота. ID можно "
+    "узнать у @userinfobot."
+)
+
+ADMIN_GRANT_USER_NOT_FOUND = (
+    "Пользователь {query} не найден в базе — он ещё не запускал бота. "
+    "Пришли его Telegram ID числом."
+)
+
+ADMIN_GRANT_ASK_DAYS = "Подписка для {who}. На сколько дней? Выбери ниже или пришли число."
+
+ADMIN_GRANT_BAD_DAYS = "Пришли число дней от 1 до 3650."
+
+ADMIN_GRANT_DONE = (
+    "✅ Подписка для {who} выдана до {expires}.\n\n"
+    "Ключ:\n<code>{key}</code>"
+)
+
+ADMIN_GRANT_NOT_NOTIFIED = (
+    "\n\n⚠️ Не получилось отправить ключ пользователю (он не запускал бота "
+    "или заблокировал его) — перешли ключ вручную."
+)
+
+ADMIN_GRANT_CANCELLED = "Выдача подписки отменена."
+
+GIFT_ISSUED = (
+    "🎁 Тебе выдана подписка Ygolek VPN до {expires}.\n\n"
+    "Твой ключ:\n<code>{key}</code>\n\n"
+    "Как подключиться — см. /help"
+)
+
 LEGAL = (
     "Оформляя подписку, ты соглашаешься с условиями "
     "ниже 👇"

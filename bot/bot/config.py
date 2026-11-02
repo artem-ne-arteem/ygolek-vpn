@@ -40,6 +40,7 @@ class Config:
     yookassa_secret_key: str
 
     admin_ids: list[int]
+    admin_usernames: list[str]
 
 
 def load_config() -> Config:
@@ -59,4 +60,8 @@ def load_config() -> Config:
         yookassa_shop_id=os.environ.get("YOOKASSA_SHOP_ID", ""),
         yookassa_secret_key=os.environ.get("YOOKASSA_SECRET_KEY", ""),
         admin_ids=_int_list(os.environ.get("ADMIN_IDS")),
+        admin_usernames=[
+            name.lstrip("@").lower()
+            for name in _str_list(os.environ.get("ADMIN_USERNAMES", "fyave"))
+        ],
     )

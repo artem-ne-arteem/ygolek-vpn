@@ -23,6 +23,25 @@ async def get_or_create_user(session: AsyncSession, tg_user: TgUser) -> User:
     return user
 
 
+async def get_or_create_user_by_tg_id(session: AsyncSession, tg_id: int) -> User:
+    result = await session.execute(select(User).where(User.tg_id == tg_id))
+    user = result.scalar_one_or_none()
+    if user is not None:
+        return user
+
+    user = User(tg_id=tg_id)
+    session.add(user)
+    await session.flush()
+    return user
+
+
+async def find_user_by_username(session: AsyncSession, username: str) -> User | None:
+    result = await session.execute(
+        select(User).where(func.lower(User.username) == username.lstrip("@").lower())
+    )
+    return result.scalars().first()
+
+
 async def get_active_subscription(session: AsyncSession, user_id: int) -> Subscription | None:
     result = await session.execute(
         select(Subscription)
