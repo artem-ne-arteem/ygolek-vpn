@@ -17,7 +17,9 @@ const STEPS = [
   {
     n: "02",
     title: "Берёшь ключ",
-    text: `Пробный период ${TRIAL.days} дня бесплатно или сразу тариф.`,
+    text: TRIAL.enabled
+      ? `Пробный период ${TRIAL.days} дня бесплатно или сразу тариф.`
+      : "Выбираешь тариф и оплачиваешь в Telegram Stars.",
   },
   {
     n: "03",
@@ -69,7 +71,7 @@ export default function Home() {
                   href="/account"
                   className="shine glow-cta rounded-full bg-accent px-6 py-3 font-semibold text-ink"
                 >
-                  Попробовать {TRIAL.days} дня бесплатно
+                  {TRIAL.enabled ? `Попробовать ${TRIAL.days} дня бесплатно` : "Подключить VPN"}
                 </Link>
                 <a
                   href="#plans"
@@ -78,9 +80,11 @@ export default function Home() {
                   Смотреть тарифы
                 </a>
               </div>
-              <p className="mt-4 text-sm text-white/40">
-                Пробный доступ — {TRIAL.trafficLabel}, без привязки карты
-              </p>
+              {TRIAL.enabled && (
+                <p className="mt-4 text-sm text-white/40">
+                  Пробный доступ — {TRIAL.trafficLabel}, без привязки карты
+                </p>
+              )}
             </div>
           </section>
         </HeroGlow>

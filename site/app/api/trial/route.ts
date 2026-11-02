@@ -2,9 +2,13 @@ import { NextResponse } from "next/server";
 import { getUserByTgId, recordTrialSubscription, setMarzbanUsername } from "@/lib/db";
 import { upsertMarzbanUser } from "@/lib/marzban";
 import { getSession } from "@/lib/telegram-auth";
-import { TRIAL_DAYS, TRIAL_TRAFFIC_GB } from "@/lib/plans";
+import { TRIAL, TRIAL_DAYS, TRIAL_TRAFFIC_GB } from "@/lib/plans";
 
 export async function POST() {
+  if (!TRIAL.enabled) {
+    return NextResponse.json({ error: "trial_disabled" }, { status: 403 });
+  }
+
   const session = await getSession();
   if (!session.tgId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });

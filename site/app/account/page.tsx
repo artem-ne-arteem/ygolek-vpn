@@ -129,7 +129,7 @@ export default function AccountPage() {
             ) : (
               <div className="rounded-2xl border border-white/10 bg-panel p-6">
                 <p className="text-white/70">Активной подписки нет.</p>
-                {!me.trialUsed && (
+                {TRIAL.enabled && !me.trialUsed && (
                   <button
                     onClick={activateTrial}
                     disabled={busy === "trial"}

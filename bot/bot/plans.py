@@ -18,6 +18,8 @@ PLANS: list[Plan] = [
     Plan(id="12m", title="12 месяцев", days=365, traffic_gb=None, price_stars=1400),
 ]
 
+# Пробный период временно выключен — верни True, чтобы снова включить
+TRIAL_ENABLED = False
 TRIAL_DAYS = 3
 TRIAL_TRAFFIC_GB = 5
 

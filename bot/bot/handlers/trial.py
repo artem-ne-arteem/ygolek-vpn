@@ -8,7 +8,7 @@ from bot.db.repo import get_or_create_user, marzban_username_for, record_subscri
 from bot.db.session import get_session
 from bot.keyboards import back_to_menu, plans_menu
 from bot.h1panel.client import H1PanelClient, H1PanelError
-from bot.plans import TRIAL_DAYS, TRIAL_TRAFFIC_GB
+from bot.plans import TRIAL_DAYS, TRIAL_ENABLED, TRIAL_TRAFFIC_GB
 from bot.telegram_utils import safe_answer
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,12 @@ router = Router()
 
 @router.callback_query(F.data == "trial:activate")
 async def activate_trial(callback: CallbackQuery, panel_client: H1PanelClient) -> None:
+    # в старых сообщениях кнопку «Пробный период» всё ещё можно нажать
+    if not TRIAL_ENABLED:
+        await safe_answer(callback)
+        await callback.message.answer(texts.TRIAL_DISABLED, reply_markup=plans_menu())
+        return
+
     async with get_session() as session:
         user = await get_or_create_user(session, callback.from_user)
 

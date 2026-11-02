@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from bot.plans import PLANS
+from bot.plans import PLANS, TRIAL_ENABLED
 
 PRIVACY_POLICY_URL = "https://telegra.ph/Politika-konfidencialnosti-Ygolek-VPN-08-07"
 TERMS_URL = "https://telegra.ph/Polzovatelskoe-soglashenie-Ygolek-VPN-08-07"
@@ -10,7 +10,8 @@ SUPPORT_URL = "https://t.me/ygolek_support"
 
 def main_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    builder.button(text="🎁 Пробный период", callback_data="trial:activate")
+    if TRIAL_ENABLED:
+        builder.button(text="🎁 Пробный период", callback_data="trial:activate")
     builder.button(text="💳 Тарифы", callback_data="plans:show")
     builder.button(text="🔑 Мой ключ", callback_data="mykey:show")
     builder.button(text="📄 Документы", callback_data="legal:show")

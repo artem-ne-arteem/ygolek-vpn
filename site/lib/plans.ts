@@ -51,6 +51,8 @@ export const TRIAL_DAYS = 3;
 export const TRIAL_TRAFFIC_GB = 5;
 
 export const TRIAL = {
+  // Пробный период временно выключен (как и TRIAL_ENABLED в bot/bot/plans.py)
+  enabled: false,
   days: TRIAL_DAYS,
   trafficLabel: `${TRIAL_TRAFFIC_GB} ГБ`,
 };
