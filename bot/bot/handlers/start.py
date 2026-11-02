@@ -14,7 +14,7 @@ from bot.telegram_utils import safe_answer, show_screen
 
 router = Router()
 
-LOGO_PATH = Path(__file__).resolve().parent.parent / "assets" / "logo.jpg"
+START_IMAGE_PATH = Path(__file__).resolve().parent.parent / "assets" / "start.jpg"
 
 
 async def _menu_for(tg_user: TgUser, config: Config) -> tuple[str, object]:
@@ -30,7 +30,7 @@ async def _menu_for(tg_user: TgUser, config: Config) -> tuple[str, object]:
 @router.message(CommandStart())
 async def cmd_start(message: Message, config: Config) -> None:
     text, markup = await _menu_for(message.from_user, config)
-    await message.answer_photo(FSInputFile(LOGO_PATH), caption=text, reply_markup=markup)
+    await message.answer_photo(FSInputFile(START_IMAGE_PATH), caption=text, reply_markup=markup)
 
 
 @router.message(Command("menu"))
