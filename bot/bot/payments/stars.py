@@ -2,7 +2,7 @@ from aiogram import Bot
 from aiogram.types import LabeledPrice
 
 from bot import texts
-from bot.plans import Plan
+from bot.plans import DEVICE_LIMIT, Plan
 from bot.payments.base import PaymentProvider
 
 
@@ -18,6 +18,7 @@ class StarsProvider(PaymentProvider):
             description=texts.PAYMENT_DESCRIPTION.format(
                 title=plan.title,
                 traffic=texts.traffic_label(plan.traffic_gb),
+                devices=DEVICE_LIMIT,
                 days=plan.days,
             ),
             payload=f"plan:{plan.id}",

@@ -19,7 +19,7 @@ const STEPS = [
     title: "Берёшь ключ",
     text: TRIAL.enabled
       ? `Пробный период ${TRIAL.days} дня бесплатно или сразу тариф.`
-      : "Выбираешь тариф и оплачиваешь в Telegram Stars.",
+      : "Оформляешь подписку и оплачиваешь в Telegram Stars.",
   },
   {
     n: "03",
@@ -77,7 +77,7 @@ export default function Home() {
                   href="#plans"
                   className="shine rounded-full border border-white/20 px-6 py-3 font-semibold text-white transition-colors hover:border-white/40"
                 >
-                  Смотреть тарифы
+                  Смотреть цену
                 </a>
               </div>
               {TRIAL.enabled && (
@@ -113,9 +113,9 @@ export default function Home() {
 
           <section id="plans" className="mx-auto max-w-5xl py-16">
             <Reveal>
-              <h2 className="text-center text-2xl font-semibold md:text-3xl">Тарифы</h2>
+              <h2 className="text-center text-2xl font-semibold md:text-3xl">Подписка</h2>
             </Reveal>
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <div className="mx-auto mt-10 grid max-w-sm gap-6">
               {PLANS.map((plan, i) => (
                 <Reveal key={plan.id} delay={i * 120}>
                   <PlanCard plan={plan} />

@@ -143,7 +143,7 @@ export default function AccountPage() {
 
             <div className="rounded-2xl border border-white/10 bg-panel p-6">
               <p className="mb-4 font-semibold">
-                {me.subscription ? "Продлить или сменить тариф" : "Выбрать тариф"}
+                {me.subscription ? "Продлить подписку" : "Оформить подписку"}
               </p>
               <div className="flex flex-col gap-3">
                 {PLANS.map((plan) => (

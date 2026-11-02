@@ -12,34 +12,17 @@ export type Plan = {
 // Держи в синхроне с bot/bot/plans.py — покупка происходит и в боте, и
 // с сайта (через checkout, который тоже платит Stars), поэтому цены и
 // объёмы трафика должны совпадать 1:1.
+export const DEVICE_LIMIT = 5;
+
 export const PLANS: Plan[] = [
   {
     id: "1m",
     title: "1 месяц",
     days: 30,
     trafficGb: null,
-    trafficLabel: "безлимит",
-    priceStars: 150,
-    priceLabel: "150 ⭐ / мес",
-  },
-  {
-    id: "3m",
-    title: "3 месяца",
-    days: 90,
-    trafficGb: null,
-    trafficLabel: "безлимит",
-    priceStars: 400,
-    priceLabel: "400 ⭐",
-    highlighted: true,
-  },
-  {
-    id: "12m",
-    title: "12 месяцев",
-    days: 365,
-    trafficGb: null,
-    trafficLabel: "безлимит",
-    priceStars: 1400,
-    priceLabel: "1400 ⭐",
+    trafficLabel: `безлимит · до ${DEVICE_LIMIT} устройств`,
+    priceStars: 100,
+    priceLabel: "100 ⭐ / мес",
   },
 ];
 

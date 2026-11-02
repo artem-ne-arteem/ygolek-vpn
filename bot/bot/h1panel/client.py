@@ -11,6 +11,7 @@ from urllib.parse import quote
 import httpx
 
 from bot.config import Config
+from bot.plans import DEVICE_LIMIT
 
 
 class H1PanelError(RuntimeError):
@@ -47,7 +48,7 @@ class H1PanelClient:
                 "uuid": str(uuid.uuid4()),
                 "days": days,
                 "traffic_limit_gb": traffic_limit_gb,
-                "device_limit": self._config.h1_panel_device_limit,
+                "device_limit": DEVICE_LIMIT,
             }
             if self._config.h1_panel_inbound_ids:
                 payload["inbound_ids"] = self._config.h1_panel_inbound_ids
@@ -61,7 +62,7 @@ class H1PanelClient:
             client = await self._request(
                 "PATCH",
                 f"/api/clients/{quote(username, safe='')}",
-                json={"days": days, "traffic_limit_gb": traffic_limit_gb},
+                json={"days": days, "traffic_limit_gb": traffic_limit_gb, "device_limit": DEVICE_LIMIT},
             )
 
         url = self._extract_sub_url(client)

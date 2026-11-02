@@ -21,15 +21,15 @@ TRIAL_ISSUED = (
 )
 
 PLANS_HEADER = (
-    "💳 <b>Тарифы</b>\n\n"
-    "Все тарифы — безлимитный трафик. Оплата в Telegram Stars.\n"
+    "💳 <b>Подписка</b>\n\n"
+    "Безлимитный трафик, до {devices} устройств на одну подписку. Оплата в Telegram Stars.\n"
     "Если подписка уже активна, новый срок добавится к текущему, ключ останется прежним."
 )
 
 PLAN_BUTTON = "{title} — {price} ⭐"
 
 PAYMENT_TITLE = "Ygolek VPN — {title}"
-PAYMENT_DESCRIPTION = "Подписка на {title} ({traffic}, {days} дн.)"
+PAYMENT_DESCRIPTION = "Подписка на {title}: {traffic}, до {devices} устройств, {days} дн."
 
 PAYMENT_SUCCESS = (
     "✅ Оплата получена, подписка активна до {expires}.\n\n"

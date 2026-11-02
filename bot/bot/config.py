@@ -34,7 +34,6 @@ class Config:
     h1_panel_token: str
     h1_panel_inbound_ids: list[str]
     h1_panel_channels: list[str]
-    h1_panel_device_limit: int
 
     yookassa_shop_id: str
     yookassa_secret_key: str
@@ -56,7 +55,6 @@ def load_config() -> Config:
         h1_panel_token=os.environ.get("H1_PANEL_TOKEN", ""),
         h1_panel_inbound_ids=_str_list(os.environ.get("H1_PANEL_INBOUND_IDS")),
         h1_panel_channels=_str_list(os.environ.get("H1_PANEL_CHANNELS")),
-        h1_panel_device_limit=int(os.environ.get("H1_PANEL_DEVICE_LIMIT") or 0),
         yookassa_shop_id=os.environ.get("YOOKASSA_SHOP_ID", ""),
         yookassa_secret_key=os.environ.get("YOOKASSA_SECRET_KEY", ""),
         admin_ids=_int_list(os.environ.get("ADMIN_IDS")),

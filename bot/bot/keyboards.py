@@ -72,10 +72,10 @@ def admin_menu() -> InlineKeyboardMarkup:
 
 def admin_grant_days_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    for plan in PLANS:
-        builder.button(text=f"{plan.title} ({plan.days} дн.)", callback_data=f"admin:days:{plan.days}")
+    for title, days in (("7 дней", 7), ("1 месяц", 30), ("3 месяца", 90), ("1 год", 365)):
+        builder.button(text=title, callback_data=f"admin:days:{days}")
     builder.button(text="❌ Отмена", callback_data="admin:cancel")
-    builder.adjust(1)
+    builder.adjust(2, 2, 1)
     return builder.as_markup()
 
 
