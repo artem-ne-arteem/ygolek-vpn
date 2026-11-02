@@ -1,5 +1,15 @@
 import asyncio
 import logging
+import sys
+from pathlib import Path
+
+# Хостинг может запускать бота из корня репозитория (`python -m bot.bot.main`),
+# а не из папки bot/ — тогда пакет `bot` указывает на bot/, а не на bot/bot/.
+# Добавляем bot/ в sys.path и забываем уже импортированный «неправильный» `bot`,
+# чтобы `from bot.xxx import ...` работал в обоих случаях.
+if __package__ != "bot":
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    sys.modules.pop("bot", None)
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
