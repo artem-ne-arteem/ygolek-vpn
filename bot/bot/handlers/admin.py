@@ -9,6 +9,7 @@ from aiogram.types import CallbackQuery, Message
 
 from bot import texts
 from bot.admin_access import is_admin
+from bot.capacity import current_load
 from bot.config import Config
 from bot.db.repo import (
     find_user_by_username,
@@ -18,6 +19,7 @@ from bot.db.repo import (
     record_subscription,
 )
 from bot.db.session import get_session
+from bot.devices import carry_extra_devices, device_limit_for
 from bot.h1panel.client import H1PanelClient, H1PanelError
 from bot.keyboards import admin_cancel_menu, admin_grant_days_menu, admin_menu, back_to_menu
 from bot.telegram_utils import safe_answer
@@ -50,20 +52,27 @@ async def cmd_admin(message: Message, state: FSMContext) -> None:
 
 
 @router.message(Command("stats"))
-async def cmd_stats(message: Message) -> None:
-    await message.answer(await _stats_text())
+async def cmd_stats(message: Message, config: Config) -> None:
+    await message.answer(await _stats_text(config))
 
 
 @router.callback_query(F.data == "admin:stats")
-async def show_stats(callback: CallbackQuery) -> None:
+async def show_stats(callback: CallbackQuery, config: Config) -> None:
     await safe_answer(callback)
-    await callback.message.answer(await _stats_text(), reply_markup=admin_menu())
+    await callback.message.answer(await _stats_text(config), reply_markup=admin_menu())
 
 
-async def _stats_text() -> str:
+async def _stats_text(config: Config) -> str:
     async with get_session() as session:
         stats = await get_stats(session)
-    return texts.STATS.format(**stats)
+        load = await current_load(session, config)
+    return texts.STATS.format(**stats) + texts.STATS_LOAD.format(
+        active=load.active_users,
+        max_users=load.max_users,
+        capacity=config.server_capacity_mbps,
+        min_speed=config.min_speed_per_user_mbps,
+        full="\n⛔️ Продажи закрыты — мест нет" if load.is_full else "",
+    )
 
 
 @router.callback_query(F.data == "admin:cancel")
@@ -132,7 +141,9 @@ async def _grant(reply_to: Message, state: FSMContext, panel_client: H1PanelClie
         marzban_username = user.marzban_username or marzban_username_for(user.tg_id)
 
         try:
-            key = await panel_client.upsert_user(username=marzban_username, days=days, traffic_gb=None)
+            key = await panel_client.upsert_user(
+                username=marzban_username, days=days, traffic_gb=None, device_limit=device_limit_for(user)
+            )
         except H1PanelError:
             logger.exception("Admin grant failed for tg_id=%s", tg_id)
             await reply_to.answer(texts.MARZBAN_ERROR, reply_markup=admin_menu())
@@ -141,6 +152,7 @@ async def _grant(reply_to: Message, state: FSMContext, panel_client: H1PanelClie
 
         user.marzban_username = marzban_username
         subscription = await record_subscription(session, user.id, plan_id="admin", days=days)
+        carry_extra_devices(user, subscription.expires_at)
         await session.commit()
         expires = subscription.expires_at.strftime("%d.%m.%Y")
 

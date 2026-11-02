@@ -7,6 +7,7 @@ from aiogram.types import CallbackQuery
 from bot import texts
 from bot.db.repo import get_active_subscription, get_or_create_user
 from bot.db.session import get_session
+from bot.devices import device_limit_for
 from bot.h1panel.client import H1PanelClient, H1PanelError
 from bot.keyboards import back_to_menu, key_menu, plans_menu
 from bot.telegram_utils import safe_answer, show_screen
@@ -45,6 +46,7 @@ async def show_key(callback: CallbackQuery, panel_client: H1PanelClient) -> None
             expires=subscription.expires_at.strftime("%d.%m.%Y"),
             left=texts.time_left_label(subscription.expires_at - dt.datetime.utcnow()),
             key=key,
+            devices=device_limit_for(user),
         ),
         key_menu(),
     )

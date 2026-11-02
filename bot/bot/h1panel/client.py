@@ -30,7 +30,9 @@ class H1PanelClient:
     async def close(self) -> None:
         await self._http.aclose()
 
-    async def upsert_user(self, *, username: str, days: int, traffic_gb: int | None) -> str:
+    async def upsert_user(
+        self, *, username: str, days: int, traffic_gb: int | None, device_limit: int = DEVICE_LIMIT
+    ) -> str:
         """Создаёт клиента или продлевает существующего на `days` дней.
 
         Возвращает subscription-ссылку, которую вставляют в Happ/v2rayNG.
@@ -48,7 +50,7 @@ class H1PanelClient:
                 "uuid": str(uuid.uuid4()),
                 "days": days,
                 "traffic_limit_gb": traffic_limit_gb,
-                "device_limit": DEVICE_LIMIT,
+                "device_limit": device_limit,
             }
             if self._config.h1_panel_inbound_ids:
                 payload["inbound_ids"] = self._config.h1_panel_inbound_ids
@@ -62,7 +64,7 @@ class H1PanelClient:
             client = await self._request(
                 "PATCH",
                 f"/api/clients/{quote(username, safe='')}",
-                json={"days": days, "traffic_limit_gb": traffic_limit_gb, "device_limit": DEVICE_LIMIT},
+                json={"days": days, "traffic_limit_gb": traffic_limit_gb, "device_limit": device_limit},
             )
 
         url = self._extract_sub_url(client)
@@ -73,6 +75,14 @@ class H1PanelClient:
         if url is None:
             raise H1PanelError(f"Панель не вернула ссылку подписки для {username}: {client}")
         return url
+
+    async def set_device_limit(self, username: str, device_limit: int) -> None:
+        """Меняет только лимит устройств, срок и трафик не трогает."""
+        if self._config.h1_panel_mock:
+            return
+        await self._request(
+            "PATCH", f"/api/clients/{quote(username, safe='')}", json={"device_limit": device_limit}
+        )
 
     async def get_subscription_url(self, username: str) -> str | None:
         """Возвращает текущую subscription-ссылку без изменения срока/лимита."""

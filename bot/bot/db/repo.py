@@ -91,6 +91,16 @@ async def get_latest_subscriptions_around(
     return list(result.all())
 
 
+async def count_active_users(session: AsyncSession) -> int:
+    """Сколько людей сейчас с действующей подпиской."""
+    now = dt.datetime.utcnow()
+    return (
+        await session.execute(
+            select(func.count(func.distinct(Subscription.user_id))).where(Subscription.expires_at > now)
+        )
+    ).scalar_one()
+
+
 async def get_stats(session: AsyncSession) -> dict:
     now = dt.datetime.utcnow()
 

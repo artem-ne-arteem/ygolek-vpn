@@ -46,6 +46,7 @@ type Me = {
   username: string | null;
   subscription: { expiresAt: string } | null;
   key: string | null;
+  deviceLimit?: number;
 };
 
 const plan = PLANS[0];
@@ -228,6 +229,7 @@ export default function MiniApp() {
   const sub = me.subscription;
   const left = sub ? daysLeft(sub.expiresAt) : 0;
   const progress = sub ? Math.min(100, Math.round((left / plan.days) * 100)) : 0;
+  const deviceLimit = me.deviceLimit ?? DEVICE_LIMIT;
   const activeGuide = GUIDES.find((g) => g.id === guide) ?? GUIDES[0];
 
   return (
@@ -291,7 +293,7 @@ export default function MiniApp() {
                 <Icon name={copied ? "check" : "copy"} className="h-4 w-4" />
                 {copied ? "Скопировано" : "Скопировать ключ"}
               </button>
-              <p className="ma-hint mt-3 text-xs">Ключ личный — не пересылай его. Работает на {DEVICE_LIMIT} устройствах.</p>
+              <p className="ma-hint mt-3 text-xs">Ключ личный — не пересылай его. Работает на {deviceLimit} устройствах.</p>
             </>
           ) : (
             <p className="ma-hint mt-2 text-sm">Не получилось загрузить ключ. Возьми его в боте кнопкой «Мой ключ».</p>
@@ -331,7 +333,7 @@ export default function MiniApp() {
 
       {/* Тариф и поддержка */}
       <section className="ma-card ma-divide">
-        <Row icon="star" title={`${plan.title} — ${plan.priceStars} ⭐`} text={`Безлимит трафика · до ${DEVICE_LIMIT} устройств`} />
+        <Row icon="star" title={`${plan.title} — ${plan.priceStars} ⭐`} text={`Безлимит трафика · до ${deviceLimit} устройств`} />
         <Row icon="chat" title="Поддержка" text="@ygolek_support" onClick={openSupport} />
       </section>
     </Shell>

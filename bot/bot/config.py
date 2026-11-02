@@ -43,6 +43,11 @@ class Config:
 
     webapp_url: str
 
+    # Ограничение нагрузки: канал сервера ÷ активные подписки не должен
+    # опускаться ниже min_speed_per_user_mbps, иначе продажи закрываются
+    server_capacity_mbps: int
+    min_speed_per_user_mbps: int
+
 
 def load_config() -> Config:
     bot_token = os.environ.get("BOT_TOKEN")
@@ -66,4 +71,7 @@ def load_config() -> Config:
         ],
         # Адрес мини-аппа; пустая строка — кнопки мини-аппа не показываются
         webapp_url=os.environ.get("WEBAPP_URL", "https://ygolek-vpn.online/app"),
+        # Сейчас бот выдаёт ключи только на сервер из H1_PANEL_URL (500 Мбит/с)
+        server_capacity_mbps=int(os.environ.get("SERVER_CAPACITY_MBPS") or 500),
+        min_speed_per_user_mbps=int(os.environ.get("MIN_SPEED_PER_USER_MBPS") or 100),
     )

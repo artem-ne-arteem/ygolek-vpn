@@ -26,6 +26,10 @@ async def init_db(config: Config) -> None:
 # create_all() не трогает уже существующие таблицы, поэтому новые колонки
 # добираем руками. Работает и на SQLite, и на Postgres.
 _NEW_COLUMNS = {
+    "users": {
+        "extra_devices": "INTEGER NOT NULL DEFAULT 0",
+        "extra_devices_until": "TIMESTAMP NULL",
+    },
     "subscriptions": {
         "reminder_3d_sent": "BOOLEAN NOT NULL DEFAULT false",
         "expired_notified": "BOOLEAN NOT NULL DEFAULT false",

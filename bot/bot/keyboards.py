@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from bot.plans import PLANS, TRIAL_ENABLED
+from bot.plans import EXTRA_DEVICE_PRICE_STARS, PLANS, TRIAL_ENABLED
 
 PRIVACY_POLICY_URL = "https://telegra.ph/Politika-konfidencialnosti-Ygolek-VPN-08-07"
 TERMS_URL = "https://telegra.ph/Polzovatelskoe-soglashenie-Ygolek-VPN-08-07"
@@ -15,6 +15,7 @@ def main_menu(has_subscription: bool = False, webapp_url: str = "") -> InlineKey
     if has_subscription:
         builder.button(text="🔑 Мой ключ", callback_data="mykey:show")
         builder.button(text="💳 Продлить подписку", callback_data="plans:show")
+        builder.button(text="➕ Добавить устройство", callback_data="devices:show")
     else:
         if TRIAL_ENABLED:
             builder.button(text="🎁 Пробный период", callback_data="trial:activate")
@@ -25,6 +26,15 @@ def main_menu(has_subscription: bool = False, webapp_url: str = "") -> InlineKey
     # главные действия — по одной кнопке в ряд, «Документы» и «Поддержка» — рядом
     main_buttons = len(list(builder.buttons)) - 2
     builder.adjust(*([1] * main_buttons), 2)
+    return builder.as_markup()
+
+
+def devices_menu(can_add: bool) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    if can_add:
+        builder.button(text=f"➕ Добавить за {EXTRA_DEVICE_PRICE_STARS} ⭐", callback_data="devices:buy")
+    builder.button(text="⬅️ Меню", callback_data="menu:show")
+    builder.adjust(1)
     return builder.as_markup()
 
 

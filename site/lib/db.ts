@@ -23,6 +23,9 @@ export type DbUser = {
   username: string | null;
   marzban_username: string | null;
   trial_used: boolean;
+  // докупленные устройства (колонки добавляет бот); до extra_devices_until
+  extra_devices?: number | null;
+  extra_devices_until?: Date | null;
 };
 
 export type DbSubscription = {
