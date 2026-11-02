@@ -21,8 +21,8 @@ export function Footer() {
             Пользовательское соглашение
           </a>
         </div>
-        <a href="https://t.me/fyave" target="_blank" rel="noreferrer" className="hover:text-white">
-          Поддержка: @fyave
+        <a href="https://t.me/ygolek_support" target="_blank" rel="noreferrer" className="hover:text-white">
+          Поддержка: @ygolek_support
         </a>
       </div>
     </footer>

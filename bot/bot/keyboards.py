@@ -5,7 +5,7 @@ from bot.plans import PLANS
 
 PRIVACY_POLICY_URL = "https://telegra.ph/Politika-konfidencialnosti-Ygolek-VPN-08-07"
 TERMS_URL = "https://telegra.ph/Polzovatelskoe-soglashenie-Ygolek-VPN-08-07"
-SUPPORT_URL = "https://t.me/fyave"
+SUPPORT_URL = "https://t.me/ygolek_support"
 
 
 def main_menu() -> InlineKeyboardMarkup:

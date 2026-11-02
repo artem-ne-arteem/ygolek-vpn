@@ -13,8 +13,8 @@ class Plan:
 
 
 PLANS: list[Plan] = [
-    Plan(id="1m", title="1 месяц", days=30, traffic_gb=200, price_stars=150),
-    Plan(id="3m", title="3 месяца", days=90, traffic_gb=600, price_stars=400),
+    Plan(id="1m", title="1 месяц", days=30, traffic_gb=None, price_stars=150),
+    Plan(id="3m", title="3 месяца", days=90, traffic_gb=None, price_stars=400),
     Plan(id="12m", title="12 месяцев", days=365, traffic_gb=None, price_stars=1400),
 ]
 
