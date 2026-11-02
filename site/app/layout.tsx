@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-sans", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Ygolek VPN",
-  description: "Быстрый VPN на VLESS. Дешевле, честнее, без лишнего.",
+  description: "Быстрый VPN на VLESS Reality. Безлимитный трафик, до 5 устройств, оплата в Telegram Stars.",
 };
 
 export default function RootLayout({
@@ -12,10 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
-      <body className="min-h-screen bg-ink font-sans antialiased">
-        {children}
-      </body>
+    <html lang="ru" className={inter.variable}>
+      <body className="min-h-screen font-sans antialiased">{children}</body>
     </html>
   );
 }

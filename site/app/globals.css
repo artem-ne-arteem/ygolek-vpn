@@ -2,19 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-sans: "Inter", system-ui, sans-serif;
+body {
+  background-color: #080d17;
+  color: #e7ecf5;
+  /* мягкая подсветка и тонкая диагональная сетка — как фон дашборда */
+  background-image:
+    radial-gradient(900px 500px at 75% -10%, rgba(47, 123, 255, 0.12), transparent 70%),
+    radial-gradient(700px 500px at -10% 110%, rgba(47, 123, 255, 0.06), transparent 70%),
+    repeating-linear-gradient(135deg, rgba(148, 163, 184, 0.025) 0 1px, transparent 1px 22px);
 }
 
-body {
-  background-color: #0d0b09;
-  color: #f5f0ec;
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-panel/95 shadow-card;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent text-white shadow-glow hover:bg-accent2;
+  }
+
+  .btn-ghost {
+    @apply btn border border-line bg-panel2/60 text-white hover:border-accent/50 hover:bg-panel2;
+  }
+
+  .label-dot {
+    @apply flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted;
+  }
+
+  .label-dot::before {
+    content: "";
+    @apply h-1.5 w-1.5 rounded-full bg-accent;
+  }
+
+  .icon-box {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent;
+  }
 }
 
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .reveal-visible {
@@ -22,130 +54,10 @@ body {
   transform: translateY(0);
 }
 
-@keyframes ember-drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-3%, 4%) scale(1.08); }
-}
-
-@keyframes ember-drift-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(4%, -3%) scale(1.05); }
-}
-
-.ember-glow {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(80px);
-  pointer-events: none;
-}
-
-.ember-glow-1 {
-  background: radial-gradient(circle, rgba(255, 107, 53, 0.35), transparent 70%);
-  animation: ember-drift 14s ease-in-out infinite;
-}
-
-.ember-glow-2 {
-  background: radial-gradient(circle, rgba(255, 178, 56, 0.25), transparent 70%);
-  animation: ember-drift-2 18s ease-in-out infinite;
-}
-
-.glow-cta {
-  box-shadow: 0 0 0 rgba(255, 107, 53, 0);
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
-}
-
-.glow-cta:hover {
-  box-shadow: 0 0 40px rgba(255, 107, 53, 0.45);
-  transform: translateY(-1px);
-}
-
-/* Летящие угольки в hero */
-@keyframes ember-rise {
-  0% { transform: translateY(0) scale(1); opacity: 0; }
-  12% { opacity: 1; }
-  85% { opacity: 0.7; }
-  100% { transform: translateY(-160px) scale(0.35); opacity: 0; }
-}
-
-.ember-particle {
-  position: absolute;
-  bottom: 10%;
-  border-radius: 9999px;
-  background: radial-gradient(circle, rgba(255, 200, 120, 0.95), rgba(255, 107, 53, 0.5) 60%, transparent 75%);
-  animation-name: ember-rise;
-  animation-timing-function: ease-in;
-  animation-iteration-count: infinite;
-}
-
-/* Курсор-реактивное свечение в hero */
-.hero-glow::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(320px circle at var(--x, 50%) var(--y, 0%), rgba(255, 107, 53, 0.16), transparent 70%);
-  pointer-events: none;
-  transition: background-position 0.1s ease;
-  z-index: 0;
-}
-
-/* Бегущая строка с фичами */
-@keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee-scroll 26s linear infinite;
-}
-
-/* Блик по кнопке при наведении */
-@keyframes shine-sweep {
-  from { transform: translateX(-120%) skewX(-15deg); }
-  to { transform: translateX(220%) skewX(-15deg); }
-}
-
-.shine {
-  position: relative;
-  overflow: hidden;
-}
-
-.shine::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-  transform: translateX(-120%) skewX(-15deg);
-  pointer-events: none;
-}
-
-.shine:hover::after {
-  animation: shine-sweep 0.9s ease;
-}
-
-/* Пульсация логотипа */
-@keyframes logo-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.45); }
-  50% { box-shadow: 0 0 0 6px rgba(255, 107, 53, 0); }
-}
-
-.logo-pulse {
-  animation: logo-pulse 2.5s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-  .ember-glow-1,
-  .ember-glow-2,
-  .ember-particle,
-  .marquee-track,
-  .logo-pulse,
-  .shine::after {
-    animation: none;
   }
 }

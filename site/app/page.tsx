@@ -1,46 +1,18 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { PlanCard } from "@/components/PlanCard";
+import { Icon } from "@/components/Icon";
 import { Reveal } from "@/components/Reveal";
-import { EmberParticles } from "@/components/EmberParticles";
-import { HeroGlow } from "@/components/HeroGlow";
-import { Marquee } from "@/components/Marquee";
-import { PLANS, TRIAL } from "@/lib/plans";
+import { ActionCard, InfoTable, LinksCard, StatCard } from "@/components/ui";
+import { PRIVACY_URL, SUPPORT_URL, TERMS_URL } from "@/lib/links";
+import { DEVICE_LIMIT, PLANS, botDeepLink } from "@/lib/plans";
+
+const plan = PLANS[0];
 
 const STEPS = [
-  {
-    n: "01",
-    title: "Заходишь",
-    text: "Через Telegram — на сайте или в боте, аккаунт общий.",
-  },
-  {
-    n: "02",
-    title: "Берёшь ключ",
-    text: TRIAL.enabled
-      ? `Пробный период ${TRIAL.days} дня бесплатно или сразу тариф.`
-      : "Оформляешь подписку и оплачиваешь в Telegram Stars.",
-  },
-  {
-    n: "03",
-    title: "Подключаешься",
-    text: "Вставляешь ключ в Happ или v2rayNG — готово.",
-  },
-];
-
-const FEATURES = [
-  {
-    title: "VLESS + Reality",
-    text: "Протокол, который сложно отличить от обычного HTTPS-трафика.",
-  },
-  {
-    title: "Happ и v2rayNG",
-    text: "Один ключ — вставляешь в привычное приложение, ничего дополнительно ставить не нужно.",
-  },
-  {
-    title: "Честные тарифы",
-    text: "Оплата Telegram Stars, без скрытых комиссий и автосписаний без предупреждения.",
-  },
+  { n: "01", title: "Войди через Telegram", text: "На сайте или в боте — аккаунт общий." },
+  { n: "02", title: "Оплати подписку", text: `${plan.priceStars} ⭐ в месяц, оплата прямо в Telegram.` },
+  { n: "03", title: "Вставь ключ", text: "В Happ или v2rayNG — и нажми «Подключиться»." },
 ];
 
 export default function Home() {
@@ -48,94 +20,128 @@ export default function Home() {
     <>
       <Header />
 
-      <main>
-        <HeroGlow>
-          <section className="relative mx-auto max-w-3xl overflow-hidden px-6 py-20 text-center md:px-12 md:py-32">
-            <div className="ember-glow ember-glow-1 left-1/2 top-0 h-72 w-72 -translate-x-1/2" />
-            <div className="ember-glow ember-glow-2 bottom-0 right-0 h-64 w-64" />
-            <EmberParticles />
-
-            <div className="relative z-10">
-              <h1 className="text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-                VPN, который просто{" "}
-                <span className="bg-gradient-to-r from-accent to-accent2 bg-clip-text text-transparent">
-                  работает
-                </span>
+      <main className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-6 md:px-6 md:py-10">
+        {/* Hero + счётчики */}
+        <div className="grid gap-4 lg:grid-cols-[1.7fr_1fr]">
+          <Reveal>
+            <section className="card relative h-full overflow-hidden p-6 md:p-8">
+              <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
+              <p className="label-dot">VLESS · Reality</p>
+              <h1 className="mt-4 max-w-xl text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl">
+                VPN, который <span className="text-accent2">просто работает</span>
               </h1>
-              <p className="mx-auto mt-6 max-w-xl text-lg text-white/60">
-                Без переплат за бренд. Оформление за минуту — на сайте или в
-                Telegram-боте, ключ подходит для Happ и v2rayNG.
+              <p className="mt-4 max-w-lg text-muted">
+                Безлимитный трафик и до {DEVICE_LIMIT} устройств на одну подписку. Оформление за минуту —
+                на сайте или в Telegram-боте.
               </p>
-              <div className="mt-10 flex flex-col items-center justify-center gap-3 md:flex-row">
-                <Link
-                  href="/account"
-                  className="shine glow-cta rounded-full bg-accent px-6 py-3 font-semibold text-ink"
-                >
-                  {TRIAL.enabled ? `Попробовать ${TRIAL.days} дня бесплатно` : "Подключить VPN"}
-                </Link>
-                <a
-                  href="#plans"
-                  className="shine rounded-full border border-white/20 px-6 py-3 font-semibold text-white transition-colors hover:border-white/40"
-                >
-                  Смотреть цену
-                </a>
+
+              <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Подписка</p>
+                  <p className="mt-1 text-4xl font-bold tracking-tight">
+                    {plan.priceStars} ⭐ <span className="text-lg font-medium text-muted">/ месяц</span>
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Link href="/account" className="btn-primary">
+                      Подключить VPN
+                    </Link>
+                    <a href={botDeepLink()} target="_blank" rel="noreferrer" className="btn-ghost">
+                      <Icon name="send" className="h-4 w-4" />
+                      Открыть бота
+                    </a>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 text-sm sm:items-end">
+                  {["Без логов трафика", "Ключ за минуту", "Поддержка в Telegram"].map((item) => (
+                    <span
+                      key={item}
+                      className="flex w-fit items-center gap-2 whitespace-nowrap rounded-xl border border-line bg-panel2/70 px-3 py-2"
+                    >
+                      <Icon name="check" className="h-4 w-4 text-accent" />
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
-              {TRIAL.enabled && (
-                <p className="mt-4 text-sm text-white/40">
-                  Пробный доступ — {TRIAL.trafficLabel}, без привязки карты
-                </p>
-              )}
-            </div>
-          </section>
-        </HeroGlow>
+            </section>
+          </Reveal>
 
-        <Marquee />
-
-        <div className="px-6 md:px-12">
-          <section className="mx-auto max-w-5xl py-12">
-            <Reveal>
-              <h2 className="text-center text-sm font-semibold uppercase tracking-widest text-white/40">
-                Как это работает
-              </h2>
+          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+            <Reveal delay={80}>
+              <StatCard value={String(DEVICE_LIMIT)} label="устройств на подписку" icon="devices" />
             </Reveal>
-            <div className="mt-8 grid gap-6 md:grid-cols-3">
-              {STEPS.map((step, i) => (
-                <Reveal key={step.n} delay={i * 120}>
-                  <div className="h-full rounded-2xl border border-white/10 bg-panel p-6 transition-transform duration-300 hover:-translate-y-1">
-                    <span className="text-3xl font-bold text-accent/40">{step.n}</span>
-                    <h3 className="mt-3 font-semibold">{step.title}</h3>
-                    <p className="mt-1 text-sm text-white/60">{step.text}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </section>
-
-          <section id="plans" className="mx-auto max-w-5xl py-16">
-            <Reveal>
-              <h2 className="text-center text-2xl font-semibold md:text-3xl">Подписка</h2>
+            <Reveal delay={160}>
+              <StatCard value="Безлимит" label="трафик без ограничений" icon="infinity" />
             </Reveal>
-            <div className="mx-auto mt-10 grid max-w-sm gap-6">
-              {PLANS.map((plan, i) => (
-                <Reveal key={plan.id} delay={i * 120}>
-                  <PlanCard plan={plan} />
-                </Reveal>
-              ))}
-            </div>
-          </section>
+            <Reveal delay={240}>
+              <StatCard value="Reality" label="маскировка под HTTPS" icon="shield" />
+            </Reveal>
+          </div>
+        </div>
 
-          <section className="mx-auto max-w-5xl py-16">
-            <div className="grid gap-6 md:grid-cols-3">
-              {FEATURES.map((item, i) => (
-                <Reveal key={item.title} delay={i * 120}>
-                  <div className="h-full rounded-2xl border border-white/10 bg-panel p-6 transition-colors hover:border-accent/30">
-                    <h3 className="font-semibold">{item.title}</h3>
-                    <p className="mt-2 text-sm text-white/60">{item.text}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </section>
+        {/* Быстрые действия */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ActionCard icon="cart" title="Оформить подписку" text="Оплата в Telegram Stars без лишних шагов" href="/account" />
+          <ActionCard icon="user" title="Личный кабинет" text="Ключ, срок подписки и продление" href="/account" />
+          <ActionCard icon="book" title="Как подключить" text="Инструкция для iPhone, Android, Windows и Mac" href="/faq" />
+          <ActionCard icon="chat" title="Поддержка" text="Ответим в Telegram — @ygolek_support" href={SUPPORT_URL} />
+        </div>
+
+        {/* Тариф + ссылки */}
+        <div id="plan" className="grid scroll-mt-24 gap-4 lg:grid-cols-[1.7fr_1fr]">
+          <Reveal>
+            <section className="card h-full p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="label-dot">Тариф</p>
+                  <h2 className="mt-1 text-lg font-semibold">Подписка на {plan.title.toLowerCase()}</h2>
+                </div>
+                <Link href="/account" className="btn-primary">
+                  Оформить за {plan.priceStars} ⭐
+                </Link>
+              </div>
+              <div className="mt-5">
+                <InfoTable
+                  rows={[
+                    { label: "Срок", value: `${plan.days} дней` },
+                    { label: "Трафик", value: "Безлимит" },
+                    { label: "Устройства", value: `до ${DEVICE_LIMIT} одновременно` },
+                    { label: "Протокол", value: "VLESS + Reality" },
+                    { label: "Приложения", value: "Happ, v2rayNG, v2RayTun" },
+                    { label: "Оплата", value: "Telegram Stars" },
+                  ]}
+                />
+              </div>
+              <p className="mt-4 text-sm text-muted">
+                Продление добавляет дни к текущему сроку, ключ остаётся прежним — перенастраивать ничего не нужно.
+              </p>
+            </section>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <LinksCard
+              links={[
+                { label: "Telegram-бот", href: botDeepLink() },
+                { label: "Как подключиться", href: "/faq" },
+                { label: "Поддержка", href: SUPPORT_URL },
+                { label: "Пользовательское соглашение", href: TERMS_URL },
+                { label: "Политика конфиденциальности", href: PRIVACY_URL },
+              ]}
+            />
+          </Reveal>
+        </div>
+
+        {/* Как это работает */}
+        <div className="grid gap-4 md:grid-cols-3">
+          {STEPS.map((step, i) => (
+            <Reveal key={step.n} delay={i * 100}>
+              <div className="card h-full p-5">
+                <span className="font-mono text-sm font-semibold text-accent">{step.n}</span>
+                <h3 className="mt-3 font-semibold">{step.title}</h3>
+                <p className="mt-1 text-sm text-muted">{step.text}</p>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </main>
 

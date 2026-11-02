@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getUserByTgId, recordTrialSubscription, setMarzbanUsername } from "@/lib/db";
-import { upsertMarzbanUser } from "@/lib/marzban";
+import { upsertPanelUser } from "@/lib/h1panel";
 import { getSession } from "@/lib/telegram-auth";
 import { TRIAL, TRIAL_DAYS, TRIAL_TRAFFIC_GB } from "@/lib/plans";
 
@@ -27,7 +27,7 @@ export async function POST() {
 
   let key: string;
   try {
-    key = await upsertMarzbanUser(marzbanUsername, TRIAL_DAYS, TRIAL_TRAFFIC_GB);
+    key = await upsertPanelUser(marzbanUsername, TRIAL_DAYS, TRIAL_TRAFFIC_GB);
   } catch {
     return NextResponse.json({ error: "marzban_unavailable" }, { status: 502 });
   }

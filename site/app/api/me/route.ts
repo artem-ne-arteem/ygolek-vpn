@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getActiveSubscription, getUserByTgId } from "@/lib/db";
-import { getMarzbanSubscriptionUrl } from "@/lib/marzban";
+import { getPanelSubscriptionUrl } from "@/lib/h1panel";
 import { getSession } from "@/lib/telegram-auth";
 
 export async function GET() {
@@ -17,7 +17,7 @@ export async function GET() {
   const subscription = await getActiveSubscription(user.id);
   const key =
     subscription && user.marzban_username
-      ? await getMarzbanSubscriptionUrl(user.marzban_username)
+      ? await getPanelSubscriptionUrl(user.marzban_username).catch(() => null)
       : null;
 
   return NextResponse.json({

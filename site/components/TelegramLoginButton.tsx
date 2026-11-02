@@ -32,7 +32,7 @@ export function TelegramLoginButton() {
     script.async = true;
     script.setAttribute("data-telegram-login", BOT_USERNAME);
     script.setAttribute("data-size", "large");
-    script.setAttribute("data-radius", "999");
+    script.setAttribute("data-radius", "12");
     script.setAttribute("data-onauth", "onTelegramAuth(user)");
     script.setAttribute("data-request-access", "write");
 
