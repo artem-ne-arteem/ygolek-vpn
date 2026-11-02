@@ -5,11 +5,40 @@
 body {
   background-color: #080d17;
   color: #e7ecf5;
-  /* мягкая подсветка и тонкая диагональная сетка — как фон дашборда */
-  background-image:
-    radial-gradient(900px 500px at 75% -10%, rgba(47, 123, 255, 0.12), transparent 70%),
-    radial-gradient(700px 500px at -10% 110%, rgba(47, 123, 255, 0.06), transparent 70%),
-    repeating-linear-gradient(135deg, rgba(148, 163, 184, 0.025) 0 1px, transparent 1px 22px);
+}
+
+/* Фон — зацикленное видео с волнистой сеткой. Отдельный fixed-слой, чтобы
+   он стоял на месте при прокрутке. Пока видео грузится (или если
+   анимации выключены в системе) — показываем его первый кадр bg.jpg. */
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background: #080d17 url("/bg.jpg") center / cover no-repeat;
+}
+
+.site-bg video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* затемнение поверх видео, чтобы текст на карточках читался */
+.site-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 13, 23, 0.55) 0%, rgba(8, 13, 23, 0.7) 50%, rgba(8, 13, 23, 0.92) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-bg video {
+    display: none;
+  }
 }
 
 @layer components {

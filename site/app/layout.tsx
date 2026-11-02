@@ -16,7 +16,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru" className={inter.variable}>
-      <body className="min-h-screen font-sans antialiased">{children}</body>
+      <body className="min-h-screen font-sans antialiased">
+        <div className="site-bg" aria-hidden="true">
+          <video src="/bg.mp4" poster="/bg.jpg" autoPlay muted loop playsInline preload="auto" />
+        </div>
+        {children}
+      </body>
     </html>
   );
 }
