@@ -1,6 +1,9 @@
+from urllib.parse import quote
+
 from aiogram.types import InlineKeyboardMarkup, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from bot import texts
 from bot.plans import EXTRA_DEVICE_PRICE_STARS, PLANS, TRIAL_ENABLED
 
 PRIVACY_POLICY_URL = "https://telegra.ph/Politika-konfidencialnosti-Ygolek-VPN-08-07"
@@ -20,6 +23,7 @@ def main_menu(has_subscription: bool = False, webapp_url: str = "") -> InlineKey
         if TRIAL_ENABLED:
             builder.button(text="🎁 Пробный период", callback_data="trial:activate")
         builder.button(text="💳 Купить подписку", callback_data="plans:show")
+    builder.button(text="🎁 Подарить подписку", callback_data="gift:show")
     builder.button(text="📲 Как подключиться", callback_data="help:show")
     builder.button(text="📄 Документы", callback_data="legal:show")
     builder.button(text="🆘 Поддержка", url=SUPPORT_URL)
@@ -46,6 +50,29 @@ def plans_menu() -> InlineKeyboardMarkup:
             callback_data=f"plan:select:{plan.id}",
         )
     builder.button(text="⬅️ Меню", callback_data="menu:show")
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def gift_menu() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    for plan in PLANS:
+        builder.button(
+            text=texts.GIFT_BUTTON.format(title=plan.title, price=plan.price_stars),
+            callback_data=f"gift:buy:{plan.id}",
+        )
+    builder.button(text="⬅️ Меню", callback_data="menu:show")
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def gift_share_menu(link: str, share_text: str) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text="📤 Отправить другу",
+        url=f"https://t.me/share/url?url={quote(link, safe='')}&text={quote(share_text, safe='')}",
+    )
+    builder.button(text="⬅️ Меню", callback_data="menu:new")
     builder.adjust(1)
     return builder.as_markup()
 

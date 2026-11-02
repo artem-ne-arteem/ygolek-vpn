@@ -1,10 +1,11 @@
 import datetime as dt
+import secrets
 
 from aiogram.types import User as TgUser
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.db.models import Payment, Subscription, User
+from bot.db.models import Gift, Payment, Subscription, User
 
 
 def marzban_username_for(tg_id: int) -> str:
@@ -89,6 +90,20 @@ async def get_latest_subscriptions_around(
         )
     )
     return list(result.all())
+
+
+async def create_gift(session: AsyncSession, buyer_user_id: int, plan_id: str, days: int) -> Gift:
+    gift = Gift(code=secrets.token_urlsafe(9), plan_id=plan_id, days=days, buyer_user_id=buyer_user_id)
+    session.add(gift)
+    await session.flush()
+    return gift
+
+
+async def get_gift_for_update(session: AsyncSession, code: str) -> Gift | None:
+    """С блокировкой строки — чтобы один подарок нельзя было активировать дважды
+    двумя одновременными /start."""
+    result = await session.execute(select(Gift).where(Gift.code == code).with_for_update())
+    return result.scalar_one_or_none()
 
 
 async def count_active_users(session: AsyncSession) -> int:

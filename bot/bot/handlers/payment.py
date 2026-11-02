@@ -11,6 +11,7 @@ from bot.db.repo import get_active_subscription, get_or_create_user, marzban_use
 from bot.db.session import get_session
 from bot.devices import add_extra_device, carry_extra_devices, device_limit_for
 from bot.handlers.devices import DEVICE_PAYLOAD
+from bot.handlers.gift import GIFT_PAYLOAD_PREFIX, gift_paid, gift_purchase_error
 from bot.keyboards import back_to_menu
 from bot.h1panel.client import H1PanelClient, H1PanelError
 from bot.plans import MAX_EXTRA_DEVICES, get_plan
@@ -24,6 +25,14 @@ async def pre_checkout(pre_checkout_query: PreCheckoutQuery, config: Config) -> 
     """Последняя проверка перед списанием звёзд — счёт мог быть выставлен давно
     (или с сайта/мини-аппа), а мощности с тех пор закончиться."""
     payload = pre_checkout_query.invoice_payload
+
+    if payload.startswith(GIFT_PAYLOAD_PREFIX):
+        error = await gift_purchase_error(config, payload)
+        if error:
+            await pre_checkout_query.answer(ok=False, error_message=error)
+        else:
+            await pre_checkout_query.answer(ok=True)
+        return
 
     async with get_session() as session:
         user = await get_or_create_user(session, pre_checkout_query.from_user)
@@ -65,8 +74,11 @@ def _payment(user: User, plan_id: str, sp: SuccessfulPayment, status: str) -> Pa
 
 @router.message(F.successful_payment)
 async def successful_payment(message: Message, panel_client: H1PanelClient) -> None:
-    if message.successful_payment.invoice_payload == DEVICE_PAYLOAD:
+    payload = message.successful_payment.invoice_payload
+    if payload == DEVICE_PAYLOAD:
         await _device_paid(message, panel_client)
+    elif payload.startswith(GIFT_PAYLOAD_PREFIX):
+        await gift_paid(message)
     else:
         await _plan_paid(message, panel_client)
 

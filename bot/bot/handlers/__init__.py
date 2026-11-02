@@ -1,10 +1,12 @@
 from aiogram import Router
 
-from bot.handlers import admin, devices, legal, mykey, payment, plans, start, trial
+from bot.handlers import admin, devices, gift, legal, mykey, payment, plans, start, trial
 
 
 def build_root_router() -> Router:
     router = Router()
+    # gift — раньше start: /start gift_<code> должен попасть в активацию подарка
+    router.include_router(gift.router)
     router.include_router(start.router)
     router.include_router(trial.router)
     router.include_router(plans.router)

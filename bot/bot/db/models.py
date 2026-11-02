@@ -57,3 +57,19 @@ class Payment(Base):
     status: Mapped[str] = mapped_column(String(24), default="pending")
     telegram_charge_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=dt.datetime.utcnow)
+
+
+class Gift(Base):
+    """Подписка, оплаченная в подарок: покупатель получает ссылку
+    t.me/<бот>?start=gift_<code>, по ней друг активирует подписку один раз."""
+
+    __tablename__ = "gifts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    code: Mapped[str] = mapped_column(String(32), unique=True, index=True)
+    plan_id: Mapped[str] = mapped_column(String(32))
+    days: Mapped[int] = mapped_column(Integer)
+    buyer_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    redeemed_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    redeemed_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=dt.datetime.utcnow)
