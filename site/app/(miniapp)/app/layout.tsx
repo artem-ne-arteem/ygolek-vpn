@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Ygolek",
+  description: "Подписка, ключ доступа и инструкция по подключению.",
   robots: { index: false },
 };
 
@@ -18,9 +18,11 @@ export const viewport: Viewport = {
 export default function MiniAppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      {/* beforeInteractive разрешён только в корневом layout, поэтому грузим
-          обычным способом, а страница ждёт появления window.Telegram */}
-      <Script src="https://telegram.org/js/telegram-web-app.js" strategy="afterInteractive" />
+      {/* SDK должен выполниться до гидрации React: Telegram передаёт данные
+          входа в #хэше адреса, а роутер Next.js успевает его затереть.
+          Поэтому обычный синхронный <script>, а не next/script. */}
+      {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+      <script src="https://telegram.org/js/telegram-web-app.js" />
       {children}
     </>
   );
