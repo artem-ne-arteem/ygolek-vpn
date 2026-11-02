@@ -1,0 +1,8 @@
+# Зависимости бота для хостинга, который ставит пакеты из корня репозитория.
+# Держи в синхроне с bot/requirements.txt.
+aiogram>=3.4,<4
+httpx>=0.27
+SQLAlchemy>=2.0
+aiosqlite>=0.20
+asyncpg>=0.29
+python-dotenv>=1.0
