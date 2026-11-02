@@ -1,0 +1,19 @@
+# Секреты — никогда не коммитим
+.env
+.env.local
+.env*.local
+!.env.example
+
+# Зависимости и сборка
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+.next/
+.vercel/
+
+# Локальная БД бота
+*.db
+
+# Локальные настройки Claude Code
+.claude/settings.local.json
