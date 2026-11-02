@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-sans", d
 
 export const metadata: Metadata = {
   title: "Ygolek VPN",
-  description: "Быстрый VPN на VLESS Reality. Безлимитный трафик, до 5 устройств, оплата в Telegram Stars.",
+  description: "Быстрый и стабильный VPN. Безлимитный трафик, до 5 устройств, оплата в Telegram Stars.",
 };
 
 export default function RootLayout({
