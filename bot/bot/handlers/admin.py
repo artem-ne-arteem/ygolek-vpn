@@ -19,7 +19,7 @@ from bot.db.repo import (
 )
 from bot.db.session import get_session
 from bot.h1panel.client import H1PanelClient, H1PanelError
-from bot.keyboards import admin_cancel_menu, admin_grant_days_menu, admin_menu
+from bot.keyboards import admin_cancel_menu, admin_grant_days_menu, admin_menu, back_to_menu
 from bot.telegram_utils import safe_answer
 
 logger = logging.getLogger(__name__)
@@ -148,7 +148,11 @@ async def _grant(reply_to: Message, state: FSMContext, panel_client: H1PanelClie
 
     result = texts.ADMIN_GRANT_DONE.format(who=who, expires=expires, key=key)
     try:
-        await bot.send_message(tg_id, texts.GIFT_ISSUED.format(expires=expires, key=key))
+        await bot.send_message(
+            tg_id,
+            texts.GIFT_ISSUED.format(expires=expires, key=key),
+            reply_markup=back_to_menu(keep_message=True),
+        )
     except (TelegramForbiddenError, TelegramBadRequest):
         logger.info("Could not deliver granted key to tg_id=%s", tg_id)
         result += texts.ADMIN_GRANT_NOT_NOTIFIED

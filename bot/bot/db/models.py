@@ -1,6 +1,6 @@
 import datetime as dt
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey, String, Boolean, Integer
+from sqlalchemy import BigInteger, DateTime, ForeignKey, String, Boolean, Integer, false
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -26,7 +26,12 @@ class Subscription(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     plan_id: Mapped[str] = mapped_column(String(32))
     expires_at: Mapped[dt.datetime] = mapped_column(DateTime)
+    # reminder_sent — напоминание за сутки (историческое имя колонки, на него
+    # завязан и сайт). Новые колонки с server_default, потому что сайт
+    # вставляет подписки сырым SQL и про них не знает.
     reminder_sent: Mapped[bool] = mapped_column(Boolean, default=False)
+    reminder_3d_sent: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
+    expired_notified: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=dt.datetime.utcnow)
 
 

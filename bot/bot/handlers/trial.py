@@ -57,5 +57,5 @@ async def activate_trial(callback: CallbackQuery, panel_client: H1PanelClient) -
             traffic=texts.traffic_label(TRIAL_TRAFFIC_GB),
             key=key,
         ),
-        reply_markup=back_to_menu(),
+        reply_markup=back_to_menu(keep_message=True),
     )

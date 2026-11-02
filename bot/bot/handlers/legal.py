@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery, Message
 
 from bot import texts
 from bot.keyboards import legal_menu
-from bot.telegram_utils import safe_answer
+from bot.telegram_utils import safe_answer, show_screen
 
 router = Router()
 
@@ -17,4 +17,4 @@ async def cmd_legal(message: Message) -> None:
 @router.callback_query(F.data == "legal:show")
 async def show_legal(callback: CallbackQuery) -> None:
     await safe_answer(callback)
-    await callback.message.answer(texts.LEGAL, reply_markup=legal_menu())
+    await show_screen(callback, texts.LEGAL, legal_menu())

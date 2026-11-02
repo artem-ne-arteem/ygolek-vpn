@@ -83,5 +83,5 @@ async def successful_payment(message: Message, panel_client: H1PanelClient) -> N
             expires=expires_at.strftime("%d.%m.%Y"),
             key=key,
         ),
-        reply_markup=back_to_menu(),
+        reply_markup=back_to_menu(keep_message=True),
     )

@@ -5,7 +5,7 @@ from bot import texts
 from bot.keyboards import plans_menu
 from bot.payments import get_provider
 from bot.plans import get_plan
-from bot.telegram_utils import safe_answer
+from bot.telegram_utils import safe_answer, show_screen
 
 router = Router()
 
@@ -13,7 +13,7 @@ router = Router()
 @router.callback_query(F.data == "plans:show")
 async def show_plans(callback: CallbackQuery) -> None:
     await safe_answer(callback)
-    await callback.message.answer(texts.PLANS_HEADER, reply_markup=plans_menu())
+    await show_screen(callback, texts.PLANS_HEADER, plans_menu())
 
 
 @router.callback_query(F.data.startswith("plan:select:"))

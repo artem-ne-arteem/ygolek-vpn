@@ -64,17 +64,28 @@ async def record_subscription(session: AsyncSession, user_id: int, plan_id: str,
     return sub
 
 
-async def get_subscriptions_expiring_soon(
-    session: AsyncSession, within: dt.timedelta
+async def get_latest_subscriptions_around(
+    session: AsyncSession, before: dt.timedelta, after: dt.timedelta
 ) -> list[tuple[Subscription, User]]:
+    """Последние подписки пользователей, которые кончаются в окне
+    [сейчас - after, сейчас + before].
+
+    Берём только самую позднюю подписку каждого пользователя: продление
+    создаёт новую строку, и напоминать про старую (уже перекрытую) нельзя.
+    """
     now = dt.datetime.utcnow()
+    latest = (
+        select(Subscription.user_id, func.max(Subscription.expires_at).label("expires_at"))
+        .group_by(Subscription.user_id)
+        .subquery()
+    )
     result = await session.execute(
         select(Subscription, User)
+        .join(latest, (latest.c.user_id == Subscription.user_id) & (latest.c.expires_at == Subscription.expires_at))
         .join(User, User.id == Subscription.user_id)
         .where(
-            Subscription.reminder_sent.is_(False),
-            Subscription.expires_at > now,
-            Subscription.expires_at <= now + within,
+            Subscription.expires_at > now - after,
+            Subscription.expires_at <= now + before,
         )
     )
     return list(result.all())
