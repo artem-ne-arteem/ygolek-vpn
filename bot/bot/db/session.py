@@ -12,7 +12,10 @@ _sessionmaker: async_sessionmaker[AsyncSession] | None = None
 
 async def init_db(config: Config) -> None:
     global _engine, _sessionmaker
-    _engine = create_async_engine(config.database_url)
+    # Neon закрывает простаивающие соединения (засыпает без нагрузки), и пул
+    # отдавал уже мёртвое — «connection is closed». pre_ping проверяет
+    # соединение перед выдачей, recycle не держит их дольше 5 минут.
+    _engine = create_async_engine(config.database_url, pool_pre_ping=True, pool_recycle=300)
     _sessionmaker = async_sessionmaker(_engine, expire_on_commit=False)
 
     async with _engine.begin() as conn:
