@@ -41,6 +41,8 @@ class Config:
     admin_ids: list[int]
     admin_usernames: list[str]
 
+    webapp_url: str
+
 
 def load_config() -> Config:
     bot_token = os.environ.get("BOT_TOKEN")
@@ -62,4 +64,6 @@ def load_config() -> Config:
             name.lstrip("@").lower()
             for name in _str_list(os.environ.get("ADMIN_USERNAMES", "fyave"))
         ],
+        # Адрес мини-аппа; пустая строка — кнопки мини-аппа не показываются
+        webapp_url=os.environ.get("WEBAPP_URL", "https://ygolek-vpn.online/app"),
     )

@@ -90,3 +90,136 @@ body {
     transition: none;
   }
 }
+
+/* ===== Мини-апп в Telegram (app/(miniapp)) =====
+   Цвета берём из темы Telegram (--tg-theme-*), запасные — наши тёмные. */
+.miniapp {
+  --ma-bg: var(--tg-theme-secondary-bg-color, #080d17);
+  --ma-card: var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #0e1524));
+  --ma-text: var(--tg-theme-text-color, #e7ecf5);
+  --ma-hint: var(--tg-theme-hint-color, #8b97ad);
+  --ma-accent: var(--tg-theme-button-color, #2f7bff);
+  --ma-accent-text: var(--tg-theme-button-text-color, #ffffff);
+  --ma-line: color-mix(in srgb, var(--ma-hint) 22%, transparent);
+  --ma-accent-soft: color-mix(in srgb, var(--ma-accent) 15%, transparent);
+  min-height: 100vh;
+  background: var(--ma-bg);
+  color: var(--ma-text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.miniapp .ma-card {
+  border-radius: 16px;
+  background: var(--ma-card);
+}
+
+.miniapp .ma-hint {
+  color: var(--ma-hint);
+}
+
+.miniapp .ma-section {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ma-hint);
+}
+
+.miniapp .ma-icon {
+  display: flex;
+  height: 36px;
+  width: 36px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--ma-accent-soft);
+  color: var(--ma-accent);
+}
+
+.miniapp .ma-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  background: var(--ma-accent);
+  color: var(--ma-accent-text);
+}
+
+.miniapp .ma-button:active {
+  opacity: 0.8;
+}
+
+.miniapp .ma-key {
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--ma-bg);
+  user-select: all;
+}
+
+.miniapp .ma-badge {
+  border-radius: 9999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--ma-accent-soft);
+  color: var(--ma-accent);
+}
+
+.miniapp .ma-progress {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--ma-line);
+}
+
+.miniapp .ma-progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--ma-accent);
+}
+
+.miniapp .ma-step-num {
+  display: flex;
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--ma-accent-soft);
+  color: var(--ma-accent);
+}
+
+.miniapp .ma-tabs {
+  display: flex;
+  gap: 4px;
+  border-radius: 12px;
+  padding: 4px;
+  background: var(--ma-bg);
+}
+
+.miniapp .ma-tab {
+  flex: 1;
+  border-radius: 9px;
+  padding: 8px 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ma-hint);
+}
+
+.miniapp .ma-tab-active {
+  background: var(--ma-card);
+  color: var(--ma-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.miniapp .ma-divide > * + * {
+  border-top: 1px solid var(--ma-line);
+}

@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from bot.plans import PLANS, TRIAL_ENABLED
@@ -8,8 +8,10 @@ TERMS_URL = "https://telegra.ph/Polzovatelskoe-soglashenie-Ygolek-VPN-08-07"
 SUPPORT_URL = "https://t.me/ygolek_support"
 
 
-def main_menu(has_subscription: bool = False) -> InlineKeyboardMarkup:
+def main_menu(has_subscription: bool = False, webapp_url: str = "") -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
+    if webapp_url:
+        builder.button(text="📱 Открыть приложение", web_app=WebAppInfo(url=webapp_url))
     if has_subscription:
         builder.button(text="🔑 Мой ключ", callback_data="mykey:show")
         builder.button(text="💳 Продлить подписку", callback_data="plans:show")
