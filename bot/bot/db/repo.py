@@ -100,7 +100,7 @@ async def create_gift(session: AsyncSession, buyer_user_id: int, plan_id: str, d
 
 
 async def get_gift_for_update(session: AsyncSession, code: str) -> Gift | None:
-    """С блокировкой строки — чтобы один подарок нельзя было активировать дважды
+    """SELECT ... FOR UPDATE — чтобы один подарок нельзя было активировать дважды
     двумя одновременными /start."""
     result = await session.execute(select(Gift).where(Gift.code == code).with_for_update())
     return result.scalar_one_or_none()

@@ -26,9 +26,9 @@ export default function Home() {
           <Reveal>
             <section className="card relative h-full overflow-hidden p-6 md:p-8">
               <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-              <p className="label-dot">VLESS · Reality</p>
+              <p className="label-dot">VLESS</p>
               <h1 className="mt-4 max-w-xl text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl">
-                VPN, который <span className="text-accent2">просто работает</span>
+                Быстрый VPN <span className="text-accent2">без лишних настроек</span>
               </h1>
               <p className="mt-4 max-w-lg text-muted">
                 Безлимитный трафик и до {DEVICE_LIMIT} устройств на одну подписку. Оформление за минуту —
@@ -71,10 +71,10 @@ export default function Home() {
               <StatCard value={String(DEVICE_LIMIT)} label="устройств на подписку" icon="devices" />
             </Reveal>
             <Reveal delay={160}>
-              <StatCard value="Безлимит" label="трафик без ограничений" icon="infinity" />
+              <StatCard value="Безлимит" label="трафик без лимита по объёму" icon="infinity" />
             </Reveal>
             <Reveal delay={240}>
-              <StatCard value="Reality" label="маскировка под HTTPS" icon="shield" />
+              <StatCard value="Stars" label="оплата прямо в Telegram" icon="shield" />
             </Reveal>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function Home() {
                     { label: "Срок", value: `${plan.days} дней` },
                     { label: "Трафик", value: "Безлимит" },
                     { label: "Устройства", value: `до ${DEVICE_LIMIT} одновременно` },
-                    { label: "Протокол", value: "VLESS + Reality" },
+                    { label: "Протокол", value: "VLESS" },
                     { label: "Приложения", value: "Happ, v2rayNG, v2RayTun" },
                     { label: "Оплата", value: "Telegram Stars" },
                   ]}

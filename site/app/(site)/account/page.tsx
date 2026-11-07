@@ -184,7 +184,7 @@ export default function AccountPage() {
                   icon={sub ? "check" : "alert"}
                 />
                 <StatCard value={`до ${DEVICE_LIMIT}`} label="устройств одновременно" icon="devices" />
-                <StatCard value="Безлимит" label="трафик без ограничений" icon="infinity" />
+                <StatCard value="Безлимит" label="трафик без лимита по объёму" icon="infinity" />
               </div>
             </div>
 
