@@ -59,6 +59,34 @@ class Payment(Base):
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=dt.datetime.utcnow)
 
 
+class AppLogin(Base):
+    """Вход в приложение Ygolek VPN через бота.
+
+    Приложение создаёт запрос на сайте (POST /api/app/login/start) и показывает
+    ссылку t.me/<бот>?start=app_<code>. Пользователь подтверждает вход в боте —
+    строка получает user_id. Приложение забирает токен (POST /api/app/login/poll)
+    и дальше ходит с ним в /api/app/me. Сайт пишет в таблицу сырым SQL, поэтому
+    у всех колонок со значениями по умолчанию есть server_default.
+    """
+
+    __tablename__ = "app_logins"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # Публичная часть: попадает в ссылку на бота
+    code: Mapped[str] = mapped_column(String(48), unique=True, index=True)
+    # sha256 от секрета, который знает только приложение (им оно забирает токен)
+    secret_hash: Mapped[str] = mapped_column(String(64))
+    device: Mapped[str] = mapped_column(String(64), default="", server_default="")
+    # pending → approved (в боте) → issued (токен выдан) | denied | revoked
+    status: Mapped[str] = mapped_column(String(16), default="pending", server_default="pending")
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    # sha256 от токена приложения
+    token_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True, index=True)
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=dt.datetime.utcnow)
+    approved_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
+    last_seen_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
+
+
 class Gift(Base):
     """Подписка, оплаченная в подарок: покупатель получает ссылку
     t.me/<бот>?start=gift_<code>, по ней друг активирует подписку один раз."""
