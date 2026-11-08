@@ -16,6 +16,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import MenuButtonWebApp, WebAppInfo
 
+from bot import texts
 from bot.config import load_config
 from bot.db.session import init_db
 from bot.handlers import build_root_router
@@ -41,6 +42,14 @@ async def main() -> None:
             )
         except Exception:
             logging.exception("Failed to set the mini app menu button")
+
+    # Описание бота («Что умеет этот бот?») и короткое описание в профиле —
+    # задаём из кода, чтобы текст был под контролем, а не правился в BotFather
+    try:
+        await bot.set_my_description(texts.bot_description())
+        await bot.set_my_short_description(texts.bot_short_description())
+    except Exception:
+        logging.exception("Failed to set the bot description")
 
     panel_client = H1PanelClient(config)
     reminder_task = asyncio.create_task(reminder_loop(bot))

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { CardPayButton } from "@/components/CardPayButton";
 import { Icon } from "@/components/Icon";
 import { Reveal } from "@/components/Reveal";
 import { ActionCard, InfoTable, LinksCard, StatCard } from "@/components/ui";
@@ -11,7 +12,7 @@ const plan = PLANS[0];
 
 const STEPS = [
   { n: "01", title: "Войди через Telegram", text: "На сайте или в боте — аккаунт общий." },
-  { n: "02", title: "Оплати подписку", text: `${plan.priceStars} ⭐ в месяц, оплата прямо в Telegram.` },
+  { n: "02", title: "Оплати подписку", text: `${plan.priceRub} ₽ в месяц картой или ${plan.priceStars} ⭐ в Telegram.` },
   { n: "03", title: "Вставь ключ", text: "В Happ или v2rayNG — и нажми «Подключиться»." },
 ];
 
@@ -39,11 +40,13 @@ export default function Home() {
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Подписка</p>
                   <p className="mt-1 text-4xl font-bold tracking-tight">
-                    {plan.priceStars} ⭐ <span className="text-lg font-medium text-muted">/ месяц</span>
+                    {plan.priceRub} ₽ <span className="text-lg font-medium text-muted">/ месяц</span>
                   </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <Link href="/account" className="btn-primary">
-                      Подключить VPN
+                  <p className="mt-1 text-sm text-muted">или {plan.priceStars} ⭐ при оплате в Telegram</p>
+                  <div className="mt-4 flex flex-wrap items-start gap-2">
+                    <CardPayButton />
+                    <Link href="/account" className="btn-ghost">
+                      Оплатить {plan.priceStars} ⭐
                     </Link>
                     <a href={botDeepLink()} target="_blank" rel="noreferrer" className="btn-ghost">
                       <Icon name="send" className="h-4 w-4" />
@@ -81,7 +84,7 @@ export default function Home() {
 
         {/* Быстрые действия */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ActionCard icon="cart" title="Оформить подписку" text="Оплата в Telegram Stars без лишних шагов" href="/account" />
+          <ActionCard icon="cart" title="Оформить подписку" text={`${plan.priceRub} ₽ картой или СБП, либо ${plan.priceStars} ⭐ в Telegram`} href="/account" />
           <ActionCard icon="user" title="Личный кабинет" text="Ключ, срок подписки и продление" href="/account" />
           <ActionCard icon="book" title="Как подключить" text="Инструкция для iPhone, Android, Windows и Mac" href="/faq" />
           <ActionCard icon="chat" title="Поддержка" text="Ответим в Telegram — @ygolek_support" href={SUPPORT_URL} />
@@ -96,19 +99,23 @@ export default function Home() {
                   <p className="label-dot">Тариф</p>
                   <h2 className="mt-1 text-lg font-semibold">Подписка на {plan.title.toLowerCase()}</h2>
                 </div>
-                <Link href="/account" className="btn-primary">
-                  Оформить за {plan.priceStars} ⭐
-                </Link>
+                <div className="flex flex-wrap items-start gap-2">
+                  <CardPayButton />
+                  <Link href="/account" className="btn-ghost">
+                    Оплатить {plan.priceStars} ⭐
+                  </Link>
+                </div>
               </div>
               <div className="mt-5">
                 <InfoTable
                   rows={[
+                    { label: "Стоимость", value: `${plan.priceRub} ₽ (или ${plan.priceStars} ⭐ в Telegram)` },
                     { label: "Срок", value: `${plan.days} дней` },
                     { label: "Трафик", value: "Безлимит" },
                     { label: "Устройства", value: `до ${DEVICE_LIMIT} одновременно` },
                     { label: "Протокол", value: "VLESS" },
                     { label: "Приложения", value: "Happ, v2rayNG, v2RayTun" },
-                    { label: "Оплата", value: "Telegram Stars" },
+                    { label: "Оплата", value: "Банковская карта, СБП или Telegram Stars" },
                   ]}
                 />
               </div>

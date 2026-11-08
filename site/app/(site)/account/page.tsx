@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CardPayButton } from "@/components/CardPayButton";
 import { Icon, type IconName } from "@/components/Icon";
 import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 import { ActionCard, Chip, InfoTable, LinksCard, Logo, StatCard } from "@/components/ui";
@@ -102,7 +103,7 @@ export default function AccountPage() {
       <Sidebar
         displayName={me ? displayName : null}
         onCheckout={me ? checkout : undefined}
-        checkoutLabel={sub ? "Продлить подписку" : "Оформить подписку"}
+        checkoutLabel={`${sub ? "Продлить" : "Оформить"} за ${plan.priceStars} ⭐`}
         busy={busy === "checkout"}
         onLogout={me ? logout : undefined}
       />
@@ -157,8 +158,9 @@ export default function AccountPage() {
                     )}
                     <div className="mt-5 flex flex-wrap gap-2">
                       <button onClick={checkout} disabled={busy === "checkout"} className="btn-primary">
-                        {busy === "checkout" ? "Создаём счёт…" : sub ? "Продлить" : "Оформить подписку"}
+                        {busy === "checkout" ? "Создаём счёт…" : `${sub ? "Продлить" : "Оформить"} за ${plan.priceStars} ⭐`}
                       </button>
+                      <CardPayButton className="btn-ghost" />
                       {TRIAL.enabled && !me.trialUsed && !sub && (
                         <button onClick={activateTrial} disabled={busy === "trial"} className="btn-ghost">
                           {busy === "trial" ? "Активируем…" : `Попробовать ${TRIAL.days} дня`}
@@ -172,7 +174,7 @@ export default function AccountPage() {
                   <div className="rounded-xl border border-line bg-panel2/60 p-4 sm:min-w-[180px]">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Тариф</p>
                     <p className="mt-2 text-lg font-semibold">{plan.title}</p>
-                    <p className="text-sm text-muted">{plan.priceStars} ⭐ · оплата в Telegram</p>
+                    <p className="text-sm text-muted">{plan.priceRub} ₽ картой или {plan.priceStars} ⭐ в Telegram</p>
                   </div>
                 </div>
               </section>
@@ -193,7 +195,7 @@ export default function AccountPage() {
               <ActionCard
                 icon="cart"
                 title={sub ? "Продлить подписку" : "Оформить подписку"}
-                text={`${plan.priceStars} ⭐ за ${plan.days} дней, ключ не меняется`}
+                text={`${plan.priceRub} ₽ или ${plan.priceStars} ⭐ за ${plan.days} дней, ключ не меняется`}
                 onClick={checkout}
               />
               <ActionCard icon="book" title="Как подключить" text="Пошаговая инструкция для всех устройств" href="/faq" />
@@ -304,6 +306,7 @@ function Sidebar({
           {busy ? "Создаём счёт…" : checkoutLabel}
         </button>
       )}
+      {onCheckout && <CardPayButton className="btn-ghost" full />}
 
       <div>
         <p className="hidden px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted lg:block">

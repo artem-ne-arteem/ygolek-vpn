@@ -10,6 +10,7 @@ class Plan:
     days: int
     traffic_gb: int | None  # None = безлимит
     price_stars: int  # цена в Telegram Stars
+    price_rub: int  # цена при оплате картой / СБП
 
 
 # Лимит устройств на подписку — один на все тарифы, подписки от админа и триал
@@ -22,7 +23,7 @@ MAX_EXTRA_DEVICES = 5  # чтобы одна подписка не съела в
 # Целевая цена — 150 ₽ в месяц; в Stars это примерно 100 ⭐ (курс Stars
 # плавает и зависит от платформы покупателя — сверяй при смене цены)
 PLANS: list[Plan] = [
-    Plan(id="1m", title="1 месяц", days=30, traffic_gb=None, price_stars=100),
+    Plan(id="1m", title="1 месяц", days=30, traffic_gb=None, price_stars=100, price_rub=150),
 ]
 
 # Пробный период временно выключен — верни True, чтобы снова включить

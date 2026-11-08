@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon, type IconName } from "@/components/Icon";
-import { DEVICE_LIMIT, PLANS } from "@/lib/plans";
+import { CARD_PAYMENT_STUB, DEVICE_LIMIT, PLANS } from "@/lib/plans";
 import { SUPPORT_URL } from "@/lib/links";
 
 // Минимальные типы Telegram WebApp API, которые здесь используются
@@ -31,6 +31,7 @@ type TgWebApp = {
   };
   openInvoice(url: string, cb: (status: "paid" | "cancelled" | "failed" | "pending") => void): void;
   openTelegramLink(url: string): void;
+  showAlert?(message: string): void;
   setHeaderColor?(color: string): void;
   setBackgroundColor?(color: string): void;
 };
@@ -196,6 +197,9 @@ export default function MiniApp() {
 
   const openSupport = () => tg?.openTelegramLink(SUPPORT_URL);
 
+  // оплата картой / СБП ещё не подключена — заглушка
+  const payByCard = () => (tg?.showAlert ? tg.showAlert(CARD_PAYMENT_STUB) : window.alert(CARD_PAYMENT_STUB));
+
   if (outside) {
     return (
       <Shell>
@@ -333,7 +337,8 @@ export default function MiniApp() {
 
       {/* Тариф и поддержка */}
       <section className="ma-card ma-divide">
-        <Row icon="star" title={`${plan.title} — ${plan.priceStars} ⭐`} text={`Безлимит трафика · до ${deviceLimit} устройств`} />
+        <Row icon="star" title={`${plan.title} — ${plan.priceRub} ₽ или ${plan.priceStars} ⭐`} text={`Безлимит трафика · до ${deviceLimit} устройств`} />
+        <Row icon="cart" title={`Оплатить картой — ${plan.priceRub} ₽`} text="Банковская карта или СБП" onClick={payByCard} />
         <Row icon="chat" title="Поддержка" text="@ygolek_support" onClick={openSupport} />
       </section>
     </Shell>

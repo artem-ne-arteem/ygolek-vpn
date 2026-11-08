@@ -45,10 +45,8 @@ def devices_menu(can_add: bool) -> InlineKeyboardMarkup:
 def plans_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for plan in PLANS:
-        builder.button(
-            text=f"{plan.title} — {plan.price_stars} ⭐",
-            callback_data=f"plan:select:{plan.id}",
-        )
+        builder.button(text=texts.PLAN_BUTTON_CARD.format(price=plan.price_rub), callback_data=f"plan:card:{plan.id}")
+        builder.button(text=texts.PLAN_BUTTON_STARS.format(price=plan.price_stars), callback_data=f"plan:select:{plan.id}")
     builder.button(text="⬅️ Меню", callback_data="menu:show")
     builder.adjust(1)
     return builder.as_markup()

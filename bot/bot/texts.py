@@ -22,11 +22,21 @@ TRIAL_ISSUED = (
 
 PLANS_HEADER = (
     "💳 <b>Подписка</b>\n\n"
-    "Безлимитный трафик, до {devices} устройств на одну подписку. Оплата в Telegram Stars.\n"
+    "Безлимитный трафик, до {devices} устройств на одну подписку.\n\n"
+    "{prices}\n\n"
+    "Оплата банковской картой, через СБП или звёздами Telegram.\n"
     "Если подписка уже активна, новый срок добавится к текущему, ключ останется прежним."
 )
 
-PLAN_BUTTON = "{title} — {price} ⭐"
+PLAN_PRICE_LINE = "• {title} — <b>{rub} ₽</b> или {stars} ⭐"
+
+PLAN_BUTTON_CARD = "💳 Оплатить картой / СБП — {price} ₽"
+PLAN_BUTTON_STARS = "⭐ Оплатить звёздами — {price} ⭐"
+
+CARD_PAYMENT_STUB = (
+    "Оплата картой и СБП временно недоступна — мы её подключаем. "
+    "Пока можно оплатить звёздами Telegram."
+)
 
 PAYMENT_TITLE = "Ygolek — {title}"
 PAYMENT_DESCRIPTION = "Подписка на {title}: {traffic}, до {devices} устройств, {days} дн."
@@ -255,3 +265,27 @@ APP_LOGIN_EXPIRED = (
     "Эта ссылка для входа устарела или уже использована. "
     "Нажми «Войти» в приложении ещё раз."
 )
+
+
+def bot_description() -> str:
+    """«Что умеет этот бот?» — до 512 символов."""
+    from bot.plans import DEVICE_LIMIT, PLANS
+
+    plan = PLANS[0]
+    return (
+        "Ygolek — быстрое и стабильное подключение по протоколу VLESS.\n\n"
+        "Здесь можно:\n"
+        f"— оформить подписку: {plan.title} — {plan.price_rub} ₽ или {plan.price_stars} ⭐ "
+        f"(безлимитный трафик, до {DEVICE_LIMIT} устройств)\n"
+        "— получить ключ и подключиться за пару кликов\n"
+        "— написать в поддержку, если что-то не работает\n\n"
+        "Жми /start, чтобы начать."
+    )
+
+
+def bot_short_description() -> str:
+    """Короткое описание в профиле бота — до 120 символов."""
+    from bot.plans import DEVICE_LIMIT, PLANS
+
+    plan = PLANS[0]
+    return f"Подписка Ygolek: безлимитный трафик, до {DEVICE_LIMIT} устройств. {plan.price_rub} ₽ / {plan.title.removeprefix('1 ')}."

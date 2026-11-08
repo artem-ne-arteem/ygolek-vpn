@@ -8,7 +8,7 @@ from bot.db.repo import get_or_create_user
 from bot.db.session import get_session
 from bot.keyboards import back_to_menu, plans_menu
 from bot.payments import get_provider
-from bot.plans import DEVICE_LIMIT, get_plan
+from bot.plans import DEVICE_LIMIT, PLANS, get_plan
 from bot.telegram_utils import safe_answer, show_screen
 
 router = Router()
@@ -28,7 +28,16 @@ async def show_plans(callback: CallbackQuery, config: Config) -> None:
     if not await _plan_allowed(callback, config):
         await show_screen(callback, texts.CAPACITY_FULL, back_to_menu())
         return
-    await show_screen(callback, texts.PLANS_HEADER.format(devices=DEVICE_LIMIT), plans_menu())
+    prices = "\n".join(
+        texts.PLAN_PRICE_LINE.format(title=p.title, rub=p.price_rub, stars=p.price_stars) for p in PLANS
+    )
+    await show_screen(callback, texts.PLANS_HEADER.format(devices=DEVICE_LIMIT, prices=prices), plans_menu())
+
+
+@router.callback_query(F.data.startswith("plan:card:"))
+async def pay_by_card(callback: CallbackQuery) -> None:
+    # Оплата картой / СБП ещё не подключена — заглушка вместо платежа
+    await safe_answer(callback, texts.CARD_PAYMENT_STUB, show_alert=True)
 
 
 @router.callback_query(F.data.startswith("plan:select:"))

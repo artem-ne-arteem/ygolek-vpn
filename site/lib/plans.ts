@@ -5,6 +5,7 @@ export type Plan = {
   trafficGb: number | null; // null = безлимит
   trafficLabel: string;
   priceStars: number;
+  priceRub: number; // цена при оплате картой / СБП
   priceLabel: string;
   highlighted?: boolean;
 };
@@ -22,9 +23,15 @@ export const PLANS: Plan[] = [
     trafficGb: null,
     trafficLabel: `безлимит · до ${DEVICE_LIMIT} устройств`,
     priceStars: 100,
+    priceRub: 150,
     priceLabel: "100 ⭐ / мес",
   },
 ];
+
+// Оплата картой / СБП (Platega) ещё не подключена: кнопка «Оплатить» показывает
+// заглушку. После модерации заменить её на реальный платёж Platega.
+export const CARD_PAYMENT_STUB =
+  "Оплата картой и СБП временно недоступна — мы её подключаем. Пока можно оплатить звёздами Telegram.";
 
 export function getPlan(id: string): Plan | undefined {
   return PLANS.find((p) => p.id === id);
