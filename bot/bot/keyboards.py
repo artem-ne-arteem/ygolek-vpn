@@ -1,5 +1,6 @@
 from urllib.parse import quote
 
+from aiogram.enums import ButtonStyle
 from aiogram.types import InlineKeyboardMarkup, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -14,16 +15,16 @@ SUPPORT_URL = "https://t.me/ygolek_support"
 def main_menu(has_subscription: bool = False, webapp_url: str = "") -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     if webapp_url:
-        builder.button(text="📱 Открыть приложение", web_app=WebAppInfo(url=webapp_url))
+        builder.button(text="📱 Открыть приложение", style=ButtonStyle.PRIMARY, web_app=WebAppInfo(url=webapp_url))
     if has_subscription:
-        builder.button(text="🔑 Мой ключ", callback_data="mykey:show")
-        builder.button(text="💳 Продлить подписку", callback_data="plans:show")
+        builder.button(text="🔑 Мой ключ", style=ButtonStyle.PRIMARY, callback_data="mykey:show")
+        builder.button(text="💳 Продлить подписку", style=ButtonStyle.SUCCESS, callback_data="plans:show")
         builder.button(text="➕ Добавить устройство", callback_data="devices:show")
     else:
         if TRIAL_ENABLED:
-            builder.button(text="🎁 Пробный период", callback_data="trial:activate")
-        builder.button(text="💳 Купить подписку", callback_data="plans:show")
-    builder.button(text="🎁 Подарить подписку", callback_data="gift:show")
+            builder.button(text="🎁 Пробный период", style=ButtonStyle.SUCCESS, callback_data="trial:activate")
+        builder.button(text="💳 Купить подписку", style=ButtonStyle.SUCCESS, callback_data="plans:show")
+    builder.button(text="🎁 Подарить подписку", style=ButtonStyle.PRIMARY, callback_data="gift:show")
     builder.button(text="📲 Как подключиться", callback_data="help:show")
     builder.button(text="📄 Документы", callback_data="legal:show")
     builder.button(text="🆘 Поддержка", url=SUPPORT_URL)
@@ -36,7 +37,7 @@ def main_menu(has_subscription: bool = False, webapp_url: str = "") -> InlineKey
 def devices_menu(can_add: bool) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     if can_add:
-        builder.button(text=f"➕ Добавить за {EXTRA_DEVICE_PRICE_STARS} ⭐", callback_data="devices:buy")
+        builder.button(text=f"➕ Добавить за {EXTRA_DEVICE_PRICE_STARS} ⭐", style=ButtonStyle.SUCCESS, callback_data="devices:buy")
     builder.button(text="⬅️ Меню", callback_data="menu:show")
     builder.adjust(1)
     return builder.as_markup()
@@ -45,8 +46,8 @@ def devices_menu(can_add: bool) -> InlineKeyboardMarkup:
 def plans_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for plan in PLANS:
-        builder.button(text=texts.PLAN_BUTTON_CARD.format(price=plan.price_rub), callback_data=f"plan:card:{plan.id}")
-        builder.button(text=texts.PLAN_BUTTON_STARS.format(price=plan.price_stars), callback_data=f"plan:select:{plan.id}")
+        builder.button(text=texts.PLAN_BUTTON_CARD.format(price=plan.price_rub), style=ButtonStyle.SUCCESS, callback_data=f"plan:card:{plan.id}")
+        builder.button(text=texts.PLAN_BUTTON_STARS.format(price=plan.price_stars), style=ButtonStyle.PRIMARY, callback_data=f"plan:select:{plan.id}")
     builder.button(text="⬅️ Меню", callback_data="menu:show")
     builder.adjust(1)
     return builder.as_markup()
@@ -54,7 +55,7 @@ def plans_menu() -> InlineKeyboardMarkup:
 
 def card_payment_menu(url: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    builder.button(text="💳 Перейти к оплате", url=url)
+    builder.button(text="💳 Перейти к оплате", style=ButtonStyle.SUCCESS, url=url)
     builder.button(text="⬅️ Меню", callback_data="menu:new")
     builder.adjust(1)
     return builder.as_markup()
@@ -65,6 +66,7 @@ def gift_menu() -> InlineKeyboardMarkup:
     for plan in PLANS:
         builder.button(
             text=texts.GIFT_BUTTON.format(title=plan.title, price=plan.price_stars),
+            style=ButtonStyle.SUCCESS,
             callback_data=f"gift:buy:{plan.id}",
         )
     builder.button(text="⬅️ Меню", callback_data="menu:show")
@@ -76,6 +78,7 @@ def gift_share_menu(link: str, share_text: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(
         text="📤 Отправить другу",
+        style=ButtonStyle.PRIMARY,
         url=f"https://t.me/share/url?url={quote(link, safe='')}&text={quote(share_text, safe='')}",
     )
     builder.button(text="⬅️ Меню", callback_data="menu:new")
@@ -101,7 +104,7 @@ def key_menu() -> InlineKeyboardMarkup:
 
 def renew_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    builder.button(text="💳 Продлить подписку", callback_data="plans:show")
+    builder.button(text="💳 Продлить подписку", style=ButtonStyle.SUCCESS, callback_data="plans:show")
     builder.button(text="⬅️ Меню", callback_data="menu:new")
     builder.adjust(1)
     return builder.as_markup()
@@ -119,14 +122,14 @@ def admin_grant_days_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for title, days in (("7 дней", 7), ("1 месяц", 30), ("3 месяца", 90), ("1 год", 365)):
         builder.button(text=title, callback_data=f"admin:days:{days}")
-    builder.button(text="❌ Отмена", callback_data="admin:cancel")
+    builder.button(text="❌ Отмена", style=ButtonStyle.DANGER, callback_data="admin:cancel")
     builder.adjust(2, 2, 1)
     return builder.as_markup()
 
 
 def admin_cancel_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    builder.button(text="❌ Отмена", callback_data="admin:cancel")
+    builder.button(text="❌ Отмена", style=ButtonStyle.DANGER, callback_data="admin:cancel")
     return builder.as_markup()
 
 

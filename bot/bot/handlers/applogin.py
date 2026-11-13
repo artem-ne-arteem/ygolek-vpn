@@ -6,6 +6,7 @@ import html
 import logging
 
 from aiogram import F, Router
+from aiogram.enums import ButtonStyle
 from aiogram.filters import CommandObject, CommandStart
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -27,8 +28,8 @@ LOGIN_TTL = dt.timedelta(minutes=10)
 
 def _confirm_menu(code: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    builder.button(text="✅ Войти", callback_data=f"applogin:ok:{code}")
-    builder.button(text="Отмена", callback_data=f"applogin:no:{code}")
+    builder.button(text="✅ Войти", style=ButtonStyle.SUCCESS, callback_data=f"applogin:ok:{code}")
+    builder.button(text="Отмена", style=ButtonStyle.DANGER, callback_data=f"applogin:no:{code}")
     builder.adjust(2)
     return builder.as_markup()
 
