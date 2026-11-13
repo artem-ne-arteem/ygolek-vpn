@@ -4,14 +4,19 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <!-- Цвета как на сайте (site/tailwind.config.ts) -->
-        <SolidColorBrush x:Key="Ink" Color="#080D17" />
+        <Color x:Key="InkColor">#080D17</Color>
+        <Color x:Key="AccentColor">#2F7BFF</Color>
+        <Color x:Key="SuccessColor">#22C55E</Color>
+        <SolidColorBrush x:Key="Ink" Color="{StaticResource InkColor}" />
         <SolidColorBrush x:Key="Panel" Color="#0E1524" />
         <SolidColorBrush x:Key="Panel2" Color="#131C2F" />
         <SolidColorBrush x:Key="Line" Color="#24FFFFFF" />
         <SolidColorBrush x:Key="Muted" Color="#8B97AD" />
-        <SolidColorBrush x:Key="Accent" Color="#2F7BFF" />
-        <SolidColorBrush x:Key="Success" Color="#22C55E" />
+        <SolidColorBrush x:Key="Accent" Color="{StaticResource AccentColor}" />
+        <SolidColorBrush x:Key="Accent2" Color="#5B9BFF" />
+        <SolidColorBrush x:Key="Success" Color="{StaticResource SuccessColor}" />
         <SolidColorBrush x:Key="Danger" Color="#F87171" />
+        <FontFamily x:Key="Icons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="White" />
@@ -20,12 +25,18 @@
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
 
+        <Style x:Key="Label" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource Muted}" />
+        </Style>
+
         <Style x:Key="Card" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource Panel}" />
             <Setter Property="BorderBrush" Value="{StaticResource Line}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="16" />
-            <Setter Property="Padding" Value="20" />
+            <Setter Property="CornerRadius" Value="18" />
+            <Setter Property="Padding" Value="18" />
         </Style>
 
         <Style x:Key="PrimaryButton" TargetType="Button">
@@ -33,7 +44,7 @@
             <Setter Property="Foreground" Value="White" />
             <Setter Property="FontSize" Value="14" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="Padding" Value="16,11" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -61,6 +72,7 @@
             <Setter Property="BorderBrush" Value="{StaticResource Line}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Padding" Value="14,9" />
         </Style>
 
         <Style x:Key="LinkButton" TargetType="Button">
@@ -70,6 +82,96 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Большая круглая кнопка подключения: цвет задаёт код (Background) -->
+        <Style x:Key="PowerButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource Panel2}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Accent}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Width" Value="148" />
+            <Setter Property="Height" Value="148" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="Root">
+                            <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="3" />
+                            <Ellipse Margin="12" Stroke="#1AFFFFFF" StrokeThickness="1" />
+                            <TextBlock Text="&#xE7E8;" FontFamily="{StaticResource Icons}" FontSize="46"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.9" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.55" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Строки списка серверов -->
+        <Style x:Key="ServerItem" TargetType="ListBoxItem">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Row" Background="{StaticResource Panel2}" BorderBrush="{StaticResource Line}"
+                                BorderThickness="1" CornerRadius="12" Padding="14,11">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="&#xE774;" FontFamily="{StaticResource Icons}" FontSize="16"
+                                           Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{Binding DisplayName}" Margin="12,0,0,0"
+                                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                                <TextBlock x:Name="Check" Grid.Column="2" Text="&#xE73E;" FontFamily="{StaticResource Icons}"
+                                           FontSize="14" Foreground="{StaticResource Accent2}" VerticalAlignment="Center"
+                                           Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Row" Property="BorderBrush" Value="#40FFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                <Setter TargetName="Row" Property="Background" Value="#1A2F7BFF" />
+                                <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Row" Property="Opacity" Value="0.6" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Тонкая полоска оставшегося срока подписки -->
+        <Style x:Key="DaysBar" TargetType="ProgressBar">
+            <Setter Property="Height" Value="6" />
+            <Setter Property="Foreground" Value="{StaticResource Accent}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border x:Name="PART_Track" Background="{StaticResource Panel2}" CornerRadius="3" />
+                            <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="3"
+                                    HorizontalAlignment="Left" />
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

@@ -10,6 +10,7 @@ YgolekVpn/      — приложение
   Services/     — API сайта, подписка (ссылки vless://), конфиг и запуск sing-box
 ConfigCheck/    — печатает конфиг sing-box для ссылки; CI проверяет его `sing-box check`
 scripts/        — fetch-sing-box.ps1 скачивает ядро в YgolekVpn/core/
+                  make-icon.ps1 собирает Assets/app.ico и mark.png из Assets/logo.jpg
 ```
 
 ## Сборка

@@ -21,7 +21,25 @@ public sealed record VlessLink(
     string? Path,
     string? HostHeader)
 {
-    public override string ToString() => Name;
+    public override string ToString() => DisplayName;
+
+    /// <summary>Название для списка: панель отдаёт «client1 · 🇳🇱⭐️Нидерланды», а WPF
+    /// не рисует флаги-эмодзи — оставляем часть после « · » без символов-эмодзи.</summary>
+    public string DisplayName
+    {
+        get
+        {
+            var tail = Name.Contains(" · ") ? Name[(Name.LastIndexOf(" · ", StringComparison.Ordinal) + 3)..] : Name;
+            var clean = new StringBuilder();
+            foreach (var rune in tail.EnumerateRunes())
+            {
+                if (Rune.IsLetterOrDigit(rune) || Rune.IsWhiteSpace(rune) || rune.Value is '-' or '.' or '(' or ')')
+                    clean.Append(rune.ToString());
+            }
+            var text = clean.ToString().Trim();
+            return text.Length > 0 ? text : Host;
+        }
+    }
 
     public static VlessLink? TryParse(string line)
     {

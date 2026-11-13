@@ -13,6 +13,18 @@ public static class AppStorage
 
     private static string TokenPath => Path.Combine(Dir, "token.bin");
     private static string DeviceIdPath => Path.Combine(Dir, "device-id");
+    private static string LastServerPath => Path.Combine(Dir, "last-server");
+
+    /// <summary>Сервер, выбранный в прошлый раз (по названию из подписки).</summary>
+    public static string? LastServer
+    {
+        get => File.Exists(LastServerPath) ? File.ReadAllText(LastServerPath).Trim() : null;
+        set
+        {
+            Directory.CreateDirectory(Dir);
+            File.WriteAllText(LastServerPath, value ?? "");
+        }
+    }
 
     public static string? LoadToken()
     {
