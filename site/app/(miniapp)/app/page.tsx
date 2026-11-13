@@ -32,6 +32,7 @@ type TgWebApp = {
   openInvoice(url: string, cb: (status: "paid" | "cancelled" | "failed" | "pending") => void): void;
   openTelegramLink(url: string): void;
   showAlert?(message: string): void;
+  openLink(url: string): void;
   setHeaderColor?(color: string): void;
   setBackgroundColor?(color: string): void;
 };
@@ -197,8 +198,22 @@ export default function MiniApp() {
 
   const openSupport = () => tg?.openTelegramLink(SUPPORT_URL);
 
-  // оплата картой / СБП ещё не подключена — заглушка
-  const payByCard = () => (tg?.showAlert ? tg.showAlert(CARD_PAYMENT_STUB) : window.alert(CARD_PAYMENT_STUB));
+  const showAlert = (text: string) => (tg?.showAlert ? tg.showAlert(text) : window.alert(text));
+
+  // оплата картой / СБП (Platega) — страница оплаты открывается в браузере,
+  // ключ бот пришлёт в чат, как только оплата пройдёт
+  const payByCard = async () => {
+    if (!tg) return;
+    try {
+      const resp = await fetch("/api/card/checkout", { method: "POST", headers: { "x-telegram-init-data": tg.initData } });
+      if (resp.status === 503) return showAlert(CARD_PAYMENT_STUB);
+      const data = await resp.json();
+      if (!resp.ok || !data.url) throw new Error();
+      tg.openLink(data.url);
+    } catch {
+      showAlert("Не получилось создать платёж. Попробуй ещё раз через минуту.");
+    }
+  };
 
   if (outside) {
     return (

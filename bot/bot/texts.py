@@ -38,6 +38,17 @@ CARD_PAYMENT_STUB = (
     "Пока можно оплатить звёздами Telegram."
 )
 
+CARD_PAYMENT_DESCRIPTION = "Подписка Ygolek на {title}"
+
+CARD_PAYMENT_LINK = (
+    "💳 <b>Оплата картой или СБП</b>\n\n"
+    "Подписка на {title} — <b>{price} ₽</b>.\n\n"
+    "Нажми кнопку ниже и выбери способ оплаты. Ссылка действует 15 минут. "
+    "Как только оплата пройдёт, я пришлю ключ сюда — обычно это занимает до минуты."
+)
+
+CARD_PAYMENT_FAILED = "Не получилось создать платёж. Попробуй ещё раз через минуту или оплати звёздами."
+
 PAYMENT_TITLE = "Ygolek — {title}"
 PAYMENT_DESCRIPTION = "Подписка на {title}: {traffic}, до {devices} устройств, {days} дн."
 

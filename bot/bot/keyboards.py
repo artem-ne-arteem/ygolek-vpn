@@ -52,6 +52,14 @@ def plans_menu() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
+def card_payment_menu(url: str) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(text="💳 Перейти к оплате", url=url)
+    builder.button(text="⬅️ Меню", callback_data="menu:new")
+    builder.adjust(1)
+    return builder.as_markup()
+
+
 def gift_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for plan in PLANS:

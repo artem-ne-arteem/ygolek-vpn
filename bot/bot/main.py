@@ -20,7 +20,9 @@ from bot import texts
 from bot.config import load_config
 from bot.db.session import init_db
 from bot.handlers import build_root_router
+from bot.card_orders import card_orders_loop
 from bot.h1panel.client import H1PanelClient
+from bot.payments.platega import PlategaClient
 from bot.reminders import reminder_loop
 
 
@@ -52,12 +54,16 @@ async def main() -> None:
         logging.exception("Failed to set the bot description")
 
     panel_client = H1PanelClient(config)
+    platega_client = PlategaClient(config)
     reminder_task = asyncio.create_task(reminder_loop(bot))
+    card_orders_task = asyncio.create_task(card_orders_loop(bot, panel_client, platega_client))
     try:
-        await dp.start_polling(bot, panel_client=panel_client, config=config)
+        await dp.start_polling(bot, panel_client=panel_client, platega_client=platega_client, config=config)
     finally:
         reminder_task.cancel()
+        card_orders_task.cancel()
         await panel_client.close()
+        await platega_client.close()
         await bot.session.close()
 
 

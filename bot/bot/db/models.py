@@ -1,6 +1,6 @@
 import datetime as dt
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey, String, Boolean, Integer, false
+from sqlalchemy import BigInteger, DateTime, ForeignKey, String, Boolean, Integer, false, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -101,3 +101,27 @@ class Gift(Base):
     redeemed_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     redeemed_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=dt.datetime.utcnow)
+
+
+class CardOrder(Base):
+    """Оплата картой / СБП через Platega.
+
+    Статусы: pending — ссылка на оплату выдана; paid — Platega подтвердила
+    оплату (колбэк на сайте или проверка ботом); fulfilled — подписка выдана;
+    canceled — оплата не прошла. Выдаёт подписку только бот (bot/card_orders.py).
+    Заказы с сайта вставляет сайт сырым SQL — отсюда server_default.
+    """
+
+    __tablename__ = "card_orders"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    plan_id: Mapped[str] = mapped_column(String(32))
+    amount_rub: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(16), default="pending", server_default="pending", index=True)
+    transaction_id: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True)
+    source: Mapped[str] = mapped_column(String(16), default="bot", server_default="bot")
+    fulfil_attempts: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=dt.datetime.utcnow, server_default=func.now())
+    paid_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
+    fulfilled_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
