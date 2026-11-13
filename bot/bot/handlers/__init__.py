@@ -1,6 +1,6 @@
 from aiogram import Router
 
-from bot.handlers import admin, applogin, devices, gift, legal, mykey, payment, plans, start, trial
+from bot.handlers import admin, applogin, broadcast, devices, gift, legal, mykey, payment, plans, start, trial
 
 
 def build_root_router() -> Router:
@@ -17,4 +17,5 @@ def build_root_router() -> Router:
     router.include_router(mykey.router)
     router.include_router(legal.router)
     router.include_router(admin.router)
+    router.include_router(broadcast.router)
     return router

@@ -114,6 +114,21 @@ def admin_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(text="🎁 Выдать подписку", callback_data="admin:grant")
     builder.button(text="📊 Статистика", callback_data="admin:stats")
+    builder.button(text="📢 Рассылка", callback_data="admin:broadcast")
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def broadcast_cancel_menu() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(text="❌ Отмена", style=ButtonStyle.DANGER, callback_data="admin:broadcast:cancel")
+    return builder.as_markup()
+
+
+def broadcast_confirm_menu() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(text="✅ Отправить всем", style=ButtonStyle.SUCCESS, callback_data="admin:broadcast:send")
+    builder.button(text="❌ Отмена", style=ButtonStyle.DANGER, callback_data="admin:broadcast:cancel")
     builder.adjust(1)
     return builder.as_markup()
 

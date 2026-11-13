@@ -106,6 +106,11 @@ async def get_gift_for_update(session: AsyncSession, code: str) -> Gift | None:
     return result.scalar_one_or_none()
 
 
+async def get_all_tg_ids(session: AsyncSession) -> list[int]:
+    """Все, кто хоть раз запускал бота (для рассылки)."""
+    return list((await session.execute(select(User.tg_id).order_by(User.id))).scalars())
+
+
 async def count_active_users(session: AsyncSession) -> int:
     """Сколько людей сейчас с действующей подпиской."""
     now = dt.datetime.utcnow()
