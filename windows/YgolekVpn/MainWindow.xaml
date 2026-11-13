@@ -1,0 +1,80 @@
+<Window x:Class="YgolekVpn.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Ygolek VPN" Width="420" Height="660" MinWidth="380" MinHeight="600"
+        WindowStartupLocation="CenterScreen" Background="{StaticResource Ink}">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Шапка -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+            <Border Width="36" Height="36" CornerRadius="10" ClipToBounds="True">
+                <Border.Background>
+                    <ImageBrush ImageSource="Assets/logo.jpg" Stretch="UniformToFill" />
+                </Border.Background>
+            </Border>
+            <TextBlock Text="Ygolek VPN" FontSize="18" FontWeight="SemiBold" Margin="12,0,0,0" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <!-- Экран входа -->
+        <Border x:Name="LoginPanel" Grid.Row="1" Style="{StaticResource Card}" Visibility="Collapsed">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Вход через Telegram" FontSize="20" FontWeight="SemiBold" />
+                <TextBlock Foreground="{StaticResource Muted}" Margin="0,8,0,16"
+                           Text="Отсканируй код телефоном или нажми кнопку — бот спросит, подтверждаешь ли ты вход на этом компьютере." />
+                <Border Background="White" CornerRadius="12" Padding="10" HorizontalAlignment="Center">
+                    <Image x:Name="QrImage" Width="200" Height="200" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                </Border>
+                <Button x:Name="OpenTelegramButton" Style="{StaticResource PrimaryButton}" Content="Открыть Telegram"
+                        Margin="0,16,0,0" Click="OpenTelegram_Click" />
+                <TextBlock x:Name="LoginStatus" Foreground="{StaticResource Muted}" Margin="0,12,0,0"
+                           HorizontalAlignment="Center" TextAlignment="Center" Text="Ждём подтверждения в боте…" />
+                <Button x:Name="NewCodeButton" Style="{StaticResource GhostButton}" Content="Получить новый код"
+                        Margin="0,12,0,0" Visibility="Collapsed" Click="NewCode_Click" />
+            </StackPanel>
+        </Border>
+
+        <!-- Главный экран -->
+        <StackPanel x:Name="HomePanel" Grid.Row="1" Visibility="Collapsed">
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="ПОДПИСКА" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Muted}" />
+                    <TextBlock x:Name="SubscriptionTitle" FontSize="20" FontWeight="SemiBold" Margin="0,6,0,0" />
+                    <TextBlock x:Name="SubscriptionDetails" Foreground="{StaticResource Muted}" Margin="0,4,0,0" />
+                    <Button x:Name="RenewButton" Style="{StaticResource GhostButton}" Content="Продлить подписку"
+                            Margin="0,14,0,0" HorizontalAlignment="Left" Click="Renew_Click" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                <StackPanel>
+                    <TextBlock Text="СЕРВЕР" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Muted}" />
+                    <ComboBox x:Name="ServerBox" Margin="0,8,0,0" Padding="10,8" FontSize="14" />
+
+                    <Button x:Name="ConnectButton" Style="{StaticResource PrimaryButton}" Margin="0,20,0,0"
+                            Padding="16,16" FontSize="16" Content="Подключить" Click="Connect_Click" />
+                    <TextBlock x:Name="ConnectionStatus" Foreground="{StaticResource Muted}" Margin="0,10,0,0"
+                               HorizontalAlignment="Center" TextAlignment="Center" Text="Не подключено" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- Ошибки и низ окна -->
+        <StackPanel Grid.Row="2">
+            <TextBlock x:Name="ErrorText" Foreground="{StaticResource Danger}" Margin="0,12,0,0" Visibility="Collapsed" />
+            <Grid Margin="0,16,0,0">
+                <Button x:Name="SupportButton" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Click="Support_Click">
+                    <TextBlock Text="Поддержка: @ygolek_support" Foreground="{StaticResource Muted}" FontSize="12" />
+                </Button>
+                <Button x:Name="LogoutButton" Style="{StaticResource LinkButton}" HorizontalAlignment="Right"
+                        Visibility="Collapsed" Click="Logout_Click">
+                    <TextBlock x:Name="LogoutText" Text="Выйти" Foreground="{StaticResource Muted}" FontSize="12" />
+                </Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>

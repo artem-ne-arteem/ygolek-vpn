@@ -1,0 +1,56 @@
+# Сборка Windows-клиента Ygolek VPN на облачной машине GitHub.
+# Каждый пуш в windows/** — артефакт YgolekVPN-windows-x64.zip во вкладке Actions.
+# Тег windows-v* (например windows-v0.1.0) — ещё и релиз на GitHub со ссылкой на zip.
+name: Windows client
+
+on:
+  push:
+    branches: [main]
+    paths: ["windows/**", ".github/workflows/windows-client.yml"]
+    tags: ["windows-v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Download sing-box core
+        shell: pwsh
+        run: ./windows/scripts/fetch-sing-box.ps1
+
+      # Конфиг, который генерирует приложение, должен проходить проверку ядра
+      - name: Check generated sing-box config
+        shell: pwsh
+        run: |
+          $link = "vless://11111111-2222-3333-4444-555555555555@example.com:443?type=grpc&security=reality&serviceName=abc123&sni=example.com&fp=firefox&pbk=TsoX3TDdqiF6dYGJZ0QHbSmkKkjx_EiRfr_jaHMGS3c&sid=05bf8db5e53feac8&encryption=none#Test"
+          dotnet run --project windows/ConfigCheck -c Release -- $link | Out-File -Encoding utf8NoBOM config.json
+          ./windows/YgolekVpn/core/sing-box.exe check -c config.json
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          dotnet publish windows/YgolekVpn -c Release -r win-x64 --self-contained `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o out
+          Compress-Archive -Path out/YgolekVPN.exe, out/sing-box.exe -DestinationPath YgolekVPN-windows-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YgolekVPN-windows-x64
+          path: YgolekVPN-windows-x64.zip
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/windows-v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" YgolekVPN-windows-x64.zip --title "Ygolek VPN для Windows ${{ github.ref_name }}" --notes "Распакуй архив и запусти YgolekVPN.exe."

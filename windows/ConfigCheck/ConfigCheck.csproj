@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Печатает конфиг sing-box для ссылки vless:// тем же кодом, что и приложение.
+       CI прогоняет результат через `sing-box check`. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\YgolekVpn\Services\VlessLink.cs" />
+    <Compile Include="..\YgolekVpn\Services\SingBoxConfig.cs" />
+    <Compile Include="..\YgolekVpn\Services\AppStorage.cs" />
+  </ItemGroup>
+
+</Project>

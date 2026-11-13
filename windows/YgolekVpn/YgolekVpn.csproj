@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>YgolekVPN</AssemblyName>
+    <RootNamespace>YgolekVpn</RootNamespace>
+    <Product>Ygolek VPN</Product>
+    <Version>0.1.0</Version>
+    <!-- TUN-адаптер создаётся только с правами администратора -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\logo.jpg" />
+    <!-- Ядро sing-box кладётся сюда скриптом scripts/fetch-sing-box.ps1 (и в CI) -->
+    <!-- Лежит отдельным файлом рядом с YgolekVPN.exe, не внутри single-file сборки -->
+    <None Include="core\sing-box.exe" Condition="Exists('core\sing-box.exe')" Link="sing-box.exe"
+          CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+</Project>
