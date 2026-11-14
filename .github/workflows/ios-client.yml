@@ -32,7 +32,7 @@ jobs:
       # Ядро собирается ~15 минут — кэшируем по версии sing-box
       - name: Restore Libbox.xcframework
         id: libbox
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ios/Frameworks/Libbox.xcframework
           key: libbox-ios-${{ env.SING_BOX_VERSION }}-v1
@@ -40,6 +40,15 @@ jobs:
       - name: Build Libbox.xcframework
         if: steps.libbox.outputs.cache-hit != 'true'
         run: bash ios/scripts/build-libbox.sh "$SING_BOX_VERSION"
+
+      # Сохраняем сразу, а не в конце job — иначе при ошибке дальше ядро
+      # пришлось бы собирать заново
+      - name: Save Libbox.xcframework
+        if: steps.libbox.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ios/Frameworks/Libbox.xcframework
+          key: libbox-ios-${{ env.SING_BOX_VERSION }}-v1
 
       - name: Generate Xcode project
         working-directory: ios
@@ -62,6 +71,12 @@ jobs:
         working-directory: ios
         run: |
           APP=build/Release-iphoneos/YgolekVPN.app
+          find build/Release-iphoneos -maxdepth 3 -name "*.app*" -o -maxdepth 3 -name "*.appex"
+          if [ ! -d "$APP/PlugIns/PacketTunnel.appex" ]; then
+            # на случай, если шаг встраивания не отработал
+            mkdir -p "$APP/PlugIns"
+            cp -R build/Release-iphoneos/PacketTunnel.appex "$APP/PlugIns/"
+          fi
           codesign -f -s - --entitlements PacketTunnel/PacketTunnel.entitlements "$APP/PlugIns/PacketTunnel.appex"
           codesign -f -s - --entitlements YgolekVPN/YgolekVPN.entitlements "$APP"
           mkdir -p Payload && cp -R "$APP" Payload/

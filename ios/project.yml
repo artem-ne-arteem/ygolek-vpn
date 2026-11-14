@@ -22,7 +22,10 @@ targets:
     sources:
       - path: YgolekVPN
     dependencies:
+      # VPN-модуль кладётся внутрь приложения (YgolekVPN.app/PlugIns)
       - target: PacketTunnel
+        embed: true
+        codeSign: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.vanilla7419.emerald5335
