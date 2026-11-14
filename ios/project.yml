@@ -51,6 +51,7 @@ targets:
       - sdk: NetworkExtension.framework
       - sdk: SystemConfiguration.framework
       - sdk: Security.framework
+      - sdk: UIKit.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.vanilla7419.emerald5335.tunnel
