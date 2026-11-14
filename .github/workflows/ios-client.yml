@@ -50,6 +50,13 @@ jobs:
           path: ios/Frameworks/Libbox.xcframework
           key: libbox-ios-${{ env.SING_BOX_VERSION }}-v1
 
+      # Liquid Glass (glassEffect) есть только в SDK iOS 26 — берём самый новый Xcode
+      - name: Select Xcode
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$XCODE" ]; then sudo xcode-select -s "$XCODE"; fi
+          xcodebuild -version
+
       - name: Generate Xcode project
         working-directory: ios
         run: |

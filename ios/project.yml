@@ -4,7 +4,7 @@ name: YgolekVPN
 options:
   bundleIdPrefix: app.vanilla7419
   deploymentTarget:
-    iOS: "15.0"
+    iOS: "16.0"
   createIntermediateGroups: true
 
 settings:

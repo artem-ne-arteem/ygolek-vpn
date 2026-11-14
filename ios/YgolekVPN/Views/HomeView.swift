@@ -4,25 +4,29 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var vpn: VPNController
-    @Environment(\.openURL) private var openURL
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: 14) {
                 HStack {
                     Header()
                     StatusPill(status: vpn.status)
                 }
+
                 PowerSection()
-                    .padding(.vertical, 8)
+                    .padding(.vertical, 14)
 
                 if let error = vpn.lastError ?? model.message {
-                    Text(error)
-                        .font(.footnote)
-                        .foregroundStyle(Theme.danger)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(12)
-                        .background(Theme.danger.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundStyle(Theme.danger)
+                        Text(error)
+                            .font(.footnote)
+                            .foregroundStyle(Theme.primary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(14)
+                    .glassCard(cornerRadius: 20)
                 }
 
                 ServersCard()
@@ -41,11 +45,13 @@ struct HomeView: View {
                     }
                 }
                 .font(.footnote)
-                .foregroundStyle(Theme.muted)
-                .padding(.horizontal, 4)
+                .foregroundStyle(Theme.tertiary)
+                .padding(.horizontal, 6)
+                .padding(.top, 4)
             }
             .padding(20)
         }
+        .scrollIndicators(.hidden)
         .refreshable { await model.loadAccount() }
     }
 }
@@ -54,20 +60,24 @@ private struct StatusPill: View {
     let status: NEVPNStatus
 
     var body: some View {
-        let (text, color): (String, Color) = switch status {
-        case .connected: ("Защищено", Theme.success)
-        case .connecting, .reasserting: ("Подключение", Theme.accent2)
-        case .disconnecting: ("Отключение", Theme.muted)
-        default: ("Отключено", Theme.muted)
+        let on = status == .connected
+        let text = switch status {
+        case .connected: "Защищено"
+        case .connecting, .reasserting: "Подключение"
+        case .disconnecting: "Отключение"
+        default: "Отключено"
         }
         HStack(spacing: 6) {
-            Circle().fill(color).frame(width: 7, height: 7)
-            Text(text).font(.caption).foregroundStyle(color)
+            Circle()
+                .fill(on ? Theme.primary : Theme.tertiary)
+                .frame(width: 6, height: 6)
+            Text(text)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(on ? Theme.primary : Theme.secondary)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 5)
-        .background(Theme.panel2, in: Capsule())
-        .overlay(Capsule().stroke(Theme.line))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .glass(in: Capsule())
     }
 }
 
@@ -80,33 +90,42 @@ private struct PowerSection: View {
     private var busy: Bool { vpn.status == .connecting || vpn.status == .disconnecting || vpn.status == .reasserting }
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             Button(action: toggle) {
                 ZStack {
-                    Circle()
-                        .fill(connected ? Theme.success : Theme.panel2)
-                        .overlay(Circle().stroke(connected ? Theme.success : Theme.accent, lineWidth: 3))
-                        .overlay(Circle().inset(by: 12).stroke(Color.white.opacity(0.1)))
-                        .shadow(color: (connected ? Theme.success : Theme.accent).opacity(busy && pulse ? 0.25 : 0.6),
-                                radius: 34)
+                    if connected {
+                        // включено — сплошной белый круг со свечением
+                        Circle()
+                            .fill(.white)
+                            .shadow(color: .white.opacity(0.45), radius: 40)
+                    } else {
+                        Circle()
+                            .fill(.clear)
+                            .glass(in: Circle(), interactive: true)
+                        Circle()
+                            .stroke(Theme.primary.opacity(busy ? (pulse ? 0.15 : 0.7) : 0.25), lineWidth: 2)
+                            .padding(10)
+                    }
                     Image(systemName: "power")
-                        .font(.system(size: 46, weight: .medium))
-                        .foregroundStyle(.white)
+                        .font(.system(size: 50, weight: .light))
+                        .foregroundStyle(connected ? .black : .white)
                 }
-                .frame(width: 150, height: 150)
+                .frame(width: 170, height: 170)
+                .contentShape(Circle())
             }
             .buttonStyle(.plain)
             .disabled(busy || (!vpn.isActive && model.selectedServer == nil))
-            .animation(.easeInOut(duration: 0.7).repeatForever(), value: pulse)
+            .animation(.easeInOut(duration: 0.8).repeatForever(), value: pulse)
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: connected)
             .onAppear { pulse = true }
 
             Text(title)
-                .font(.system(size: 24, weight: .semibold))
-                .padding(.top, 6)
+                .font(.system(size: 28, weight: .bold))
+                .padding(.top, 8)
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 Text(subtitle(now: context.date))
                     .font(.subheadline)
-                    .foregroundStyle(Theme.muted)
+                    .foregroundStyle(Theme.secondary)
                     .monospacedDigit()
             }
         }
@@ -130,7 +149,7 @@ private struct PowerSection: View {
         }
         if vpn.isActive { return server }
         if model.account?.subscription == nil { return "Нужна активная подписка" }
-        return model.servers.isEmpty ? "Загружаем серверы…" : "Выбери сервер и нажми кнопку"
+        return model.servers.isEmpty ? "Нет доступных серверов" : "Нажми, чтобы подключиться"
     }
 
     private func toggle() {
@@ -154,14 +173,12 @@ private struct ServersCard: View {
 
     var body: some View {
         Card {
-            Text("СЕРВЕРЫ")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(Theme.muted)
-                .padding(.bottom, 10)
+            SectionLabel(text: "СЕРВЕРЫ")
+                .padding(.bottom, 12)
             if model.servers.isEmpty {
-                Text(model.account?.subscription == nil ? "Серверы появятся после оформления подписки." : "Загрузка…")
+                Text(model.account?.subscription == nil ? "Серверы появятся после оформления подписки." : "Список пуст")
                     .font(.subheadline)
-                    .foregroundStyle(Theme.muted)
+                    .foregroundStyle(Theme.secondary)
             }
             VStack(spacing: 8) {
                 ForEach(model.servers) { server in
@@ -170,23 +187,24 @@ private struct ServersCard: View {
                         model.selectedServer = server
                     } label: {
                         HStack(spacing: 12) {
-                            Image(systemName: "globe").foregroundStyle(Theme.muted)
-                            Text(server.displayName).foregroundStyle(.white)
+                            Image(systemName: "globe")
+                                .foregroundStyle(selected ? Theme.primary : Theme.tertiary)
+                            Text(server.displayName)
+                                .foregroundStyle(Theme.primary)
                             Spacer()
-                            if selected {
-                                Image(systemName: "checkmark").foregroundStyle(Theme.accent2)
-                            }
+                            Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                                .foregroundStyle(selected ? Theme.primary : Theme.tertiary)
                         }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 13)
-                        .background(selected ? Theme.accent.opacity(0.1) : Theme.panel2,
-                                    in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(selected ? Theme.accent : Theme.line))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(selected ? Color.white.opacity(0.12) : Theme.fill,
+                                    in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(selected ? Color.white.opacity(0.5) : Theme.stroke))
                     }
                     .buttonStyle(.plain)
                     .disabled(vpn.isActive)
-                    .opacity(vpn.isActive && !selected ? 0.6 : 1)
+                    .opacity(vpn.isActive && !selected ? 0.45 : 1)
                 }
             }
         }
@@ -200,12 +218,10 @@ private struct SubscriptionCard: View {
     var body: some View {
         Card {
             HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("ПОДПИСКА")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.muted)
-                    Text(title).font(.system(size: 18, weight: .semibold))
-                    Text(details).font(.footnote).foregroundStyle(Theme.muted)
+                VStack(alignment: .leading, spacing: 5) {
+                    SectionLabel(text: "ПОДПИСКА")
+                    Text(title).font(.system(size: 19, weight: .semibold))
+                    Text(details).font(.footnote).foregroundStyle(Theme.secondary)
                 }
                 Spacer()
                 Button(model.account?.subscription == nil ? "Оформить" : "Продлить") {
@@ -213,17 +229,19 @@ private struct SubscriptionCard: View {
                     let url = account.subscription == nil ? account.botUrl : account.renewUrl
                     if let url = URL(string: url) { openURL(url) }
                 }
-                .font(.subheadline)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 9)
-                .background(Theme.panel2, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Theme.line))
-                .foregroundStyle(.white)
+                .buttonStyle(GlassButtonStyle())
             }
             if model.account?.subscription != nil {
-                ProgressView(value: Double(min(daysLeft, 30)), total: 30)
-                    .tint(daysLeft <= 3 ? Theme.danger : Theme.accent)
-                    .padding(.top, 14)
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(Theme.fill)
+                        Capsule()
+                            .fill(daysLeft <= 3 ? Theme.danger : Theme.primary)
+                            .frame(width: geo.size.width * CGFloat(min(daysLeft, 30)) / 30)
+                    }
+                }
+                .frame(height: 5)
+                .padding(.top, 16)
             }
         }
     }
@@ -235,7 +253,7 @@ private struct SubscriptionCard: View {
 
     private var title: String {
         guard let expires = model.account?.subscription?.expiresAt else { return "Нет активной подписки" }
-        return "Активна до \(expires.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year()))"
+        return "До \(expires.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year()))"
     }
 
     private var details: String {

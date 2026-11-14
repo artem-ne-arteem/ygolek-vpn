@@ -62,6 +62,12 @@ struct VlessLink: Identifiable, Hashable {
     }
 }
 
+enum SubscriptionError: Error {
+    /// На подписке уже подключено максимум устройств — новое панель не пускает
+    case deviceLimit
+    case http(Int)
+}
+
 enum SubscriptionLoader {
     /// Скачивает подписку (base64 или текст со ссылками) и возвращает серверы.
     static func load(_ urlString: String) async throws -> [VlessLink] {
@@ -74,8 +80,14 @@ enum SubscriptionLoader {
         request.setValue("iOS", forHTTPHeaderField: "x-device-os")
         request.setValue(UIDevice.current.model, forHTTPHeaderField: "x-device-model")
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         let body = (String(data: data, encoding: .utf8) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        guard (200 ..< 300).contains(status) else {
+            // панель отвечает {"ok":false,"error":"device_limit_exceeded",...}
+            if body.contains("device_limit_exceeded") { throw SubscriptionError.deviceLimit }
+            throw SubscriptionError.http(status)
+        }
         let text = body.contains("://") ? body : decodeBase64(body)
         return text.split(whereSeparator: \.isNewline).compactMap { VlessLink(String($0)) }
     }

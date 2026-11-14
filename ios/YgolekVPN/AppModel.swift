@@ -118,6 +118,11 @@ final class AppModel: ObservableObject {
             self.servers = servers
             selectedServer = servers.first { $0.name == Storage.lastServer } ?? servers.first
             if servers.isEmpty { message = "В подписке нет серверов. Напиши в поддержку." }
+        } catch SubscriptionError.deviceLimit {
+            servers = []
+            selectedServer = nil
+            message = "На подписке уже подключено максимум устройств (\(account.deviceLimit)). "
+                + "Добавь устройство в боте («➕ Добавить устройство») или напиши в поддержку, чтобы отвязать старое."
         } catch {
             message = "Не удалось загрузить список серверов. Проверь интернет."
         }

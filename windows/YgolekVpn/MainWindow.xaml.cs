@@ -217,6 +217,12 @@ public partial class MainWindow : Window
             ShowServers(servers);
             if (servers.Count == 0) ShowError("В подписке нет серверов. Напиши в поддержку.");
         }
+        catch (DeviceLimitException)
+        {
+            ShowServers([]);
+            ShowError($"На подписке уже подключено максимум устройств ({_account.DeviceLimit}). " +
+                      "Добавь устройство в боте («➕ Добавить устройство») или напиши в поддержку, чтобы отвязать старое.");
+        }
         catch (HttpRequestException)
         {
             ShowServers([]);

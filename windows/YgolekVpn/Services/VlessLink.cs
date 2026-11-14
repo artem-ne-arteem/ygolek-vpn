@@ -67,6 +67,9 @@ public sealed record VlessLink(
     }
 }
 
+/// <summary>На подписке уже подключено максимум устройств — новое панель не пускает.</summary>
+public sealed class DeviceLimitException : Exception;
+
 public static class SubscriptionLoader
 {
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(20) };
@@ -82,8 +85,11 @@ public static class SubscriptionLoader
         req.Headers.Add("x-device-model", Environment.MachineName);
 
         var resp = await Http.SendAsync(req);
-        resp.EnsureSuccessStatusCode();
         var body = (await resp.Content.ReadAsStringAsync()).Trim();
+        // панель отвечает 403 {"ok":false,"error":"device_limit_exceeded",...}
+        if (!resp.IsSuccessStatusCode && body.Contains("device_limit_exceeded"))
+            throw new DeviceLimitException();
+        resp.EnsureSuccessStatusCode();
 
         var text = body.Contains("://") ? body : DecodeBase64(body);
         return text.Split('\n', StringSplitOptions.RemoveEmptyEntries)
