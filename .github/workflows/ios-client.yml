@@ -62,8 +62,8 @@ jobs:
           xcodebuild -project YgolekVPN.xcodeproj -target YgolekVPN -configuration Release \
             -sdk iphoneos SYMROOT="$PWD/build" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
-            | tee build.log | grep -E "error:|warning: .*Swift|BUILD" || true
-          test -d build/Release-iphoneos/YgolekVPN.app || { tail -100 build.log; exit 1; }
+            > build.log 2>&1 || { grep -E "error:" build.log | sort -u; tail -40 build.log; exit 1; }
+          grep -E "BUILD SUCCEEDED" build.log
 
       # Псевдо-подпись: вшиваем entitlements (VPN-модуль), чтобы программа
       # подписи на телефоне их увидела. Настоящую подпись делает ESign/Feather.
