@@ -49,6 +49,8 @@ targets:
         embed: false
       - sdk: libresolv.tbd
       - sdk: NetworkExtension.framework
+      - sdk: SystemConfiguration.framework
+      - sdk: Security.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.vanilla7419.emerald5335.tunnel

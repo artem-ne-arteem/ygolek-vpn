@@ -62,7 +62,7 @@ jobs:
           xcodebuild -project YgolekVPN.xcodeproj -target YgolekVPN -configuration Release \
             -sdk iphoneos SYMROOT="$PWD/build" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
-            > build.log 2>&1 || { grep -E "error:" build.log | sort -u; tail -40 build.log; exit 1; }
+            > build.log 2>&1 || { grep -E "error:" build.log | sort -u; grep -E -A30 "Undefined symbols|ld: " build.log | head -80; exit 1; }
           grep -E "BUILD SUCCEEDED" build.log
 
       # Псевдо-подпись: вшиваем entitlements (VPN-модуль), чтобы программа
