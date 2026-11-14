@@ -169,7 +169,7 @@ final class PlatformInterface: NSObject, LibboxPlatformInterfaceProtocol, Libbox
         semaphore.wait()
     }
 
-    private func onUpdateDefaultInterface(_ listener: LibboxInterfaceUpdateListenerProtocol, _ path: NWPath) {
+    private func onUpdateDefaultInterface(_ listener: LibboxInterfaceUpdateListenerProtocol, _ path: Network.NWPath) {
         let networkPath = "\(path.status) \(path.availableInterfaces.map { "\($0.name)#\($0.index)" }.joined(separator: ","))"
         listener.updateNetworkPath(networkPath)
         if networkPath == lastNetworkPath { return }
