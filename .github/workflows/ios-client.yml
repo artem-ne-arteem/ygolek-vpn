@@ -1,0 +1,80 @@
+# Сборка iOS-клиента Ygolek VPN на облачном Маке GitHub.
+# Результат — НЕподписанный YgolekVPN-unsigned.ipa (вкладка Actions → Artifacts).
+# Подписывается на телефоне в ESign / Feather своим .p12 и .mobileprovision —
+# ключи подписи в репозиторий и в CI не попадают.
+# Тег ios-v* (например ios-v0.1.0) — ещё и релиз на GitHub.
+name: iOS client
+
+on:
+  push:
+    branches: [main]
+    paths: ["ios/**", ".github/workflows/ios-client.yml"]
+    tags: ["ios-v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  SING_BOX_VERSION: "1.14.4"
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+          cache: false
+
+      # Ядро собирается ~15 минут — кэшируем по версии sing-box
+      - name: Restore Libbox.xcframework
+        id: libbox
+        uses: actions/cache@v4
+        with:
+          path: ios/Frameworks/Libbox.xcframework
+          key: libbox-ios-${{ env.SING_BOX_VERSION }}-v1
+
+      - name: Build Libbox.xcframework
+        if: steps.libbox.outputs.cache-hit != 'true'
+        run: bash ios/scripts/build-libbox.sh "$SING_BOX_VERSION"
+
+      - name: Generate Xcode project
+        working-directory: ios
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Build app
+        working-directory: ios
+        run: |
+          xcodebuild -project YgolekVPN.xcodeproj -target YgolekVPN -configuration Release \
+            -sdk iphoneos SYMROOT="$PWD/build" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            | tee build.log | grep -E "error:|warning: .*Swift|BUILD" || true
+          test -d build/Release-iphoneos/YgolekVPN.app || { tail -100 build.log; exit 1; }
+
+      # Псевдо-подпись: вшиваем entitlements (VPN-модуль), чтобы программа
+      # подписи на телефоне их увидела. Настоящую подпись делает ESign/Feather.
+      - name: Package unsigned IPA
+        working-directory: ios
+        run: |
+          APP=build/Release-iphoneos/YgolekVPN.app
+          codesign -f -s - --entitlements PacketTunnel/PacketTunnel.entitlements "$APP/PlugIns/PacketTunnel.appex"
+          codesign -f -s - --entitlements YgolekVPN/YgolekVPN.entitlements "$APP"
+          mkdir -p Payload && cp -R "$APP" Payload/
+          zip -qry ../YgolekVPN-unsigned.ipa Payload
+          ls -la ../YgolekVPN-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YgolekVPN-unsigned-ipa
+          path: YgolekVPN-unsigned.ipa
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/ios-v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" YgolekVPN-unsigned.ipa --title "Ygolek VPN для iOS ${{ github.ref_name }}" --notes "Неподписанный .ipa — подпиши в ESign или Feather."

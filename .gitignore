@@ -17,3 +17,8 @@ node_modules/
 
 # Локальные настройки Claude Code
 .claude/settings.local.json
+
+# Сертификаты и профили подписи iOS — никогда не коммитим
+cert/
+*.p12
+*.mobileprovision
