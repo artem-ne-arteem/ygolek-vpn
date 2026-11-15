@@ -20,6 +20,13 @@ class User(Base):
     # это срок подписки на момент покупки, продление его сдвигает.
     extra_devices: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     extra_devices_until: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
+    # Реферальная программа: кто пригласил (users.id), засчитан ли этот человек
+    # пригласившему (после первой оплаты), сколько друзей засчитано ему самому
+    # и сколько бесплатных месяцев он уже получил
+    referred_by: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
+    referral_counted: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
+    referral_friends: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    referral_rewards: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, default=dt.datetime.utcnow)
 
     def active_extra_devices(self, now: dt.datetime | None = None) -> int:

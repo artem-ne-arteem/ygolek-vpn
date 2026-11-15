@@ -26,10 +26,15 @@ PLANS: list[Plan] = [
     Plan(id="1m", title="1 месяц", days=30, traffic_gb=None, price_stars=100, price_rub=150),
 ]
 
-# Пробный период временно выключен — верни True, чтобы снова включить
-TRIAL_ENABLED = False
-TRIAL_DAYS = 3
+# Пробный период — один раз на аккаунт. False — выключить
+TRIAL_ENABLED = True
+TRIAL_DAYS = 7
 TRIAL_TRAFFIC_GB = 5
+
+# Рефералка: за каждых REFERRALS_FOR_REWARD друзей, оплативших подписку
+# по ссылке, — REFERRAL_REWARD_DAYS дней бесплатно
+REFERRALS_FOR_REWARD = 5
+REFERRAL_REWARD_DAYS = 30
 
 
 def get_plan(plan_id: str) -> Plan | None:

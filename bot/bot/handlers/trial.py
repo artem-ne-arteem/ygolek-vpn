@@ -4,6 +4,8 @@ from aiogram import F, Router
 from aiogram.types import CallbackQuery
 
 from bot import texts
+from bot.capacity import can_buy
+from bot.config import Config
 from bot.db.repo import get_or_create_user, marzban_username_for, record_subscription
 from bot.db.session import get_session
 from bot.keyboards import back_to_menu, plans_menu
@@ -16,7 +18,7 @@ router = Router()
 
 
 @router.callback_query(F.data == "trial:activate")
-async def activate_trial(callback: CallbackQuery, panel_client: H1PanelClient) -> None:
+async def activate_trial(callback: CallbackQuery, panel_client: H1PanelClient, config: Config) -> None:
     # в старых сообщениях кнопку «Пробный период» всё ещё можно нажать
     if not TRIAL_ENABLED:
         await safe_answer(callback)
@@ -29,6 +31,12 @@ async def activate_trial(callback: CallbackQuery, panel_client: H1PanelClient) -
         if user.trial_used:
             await safe_answer(callback)
             await callback.message.answer(texts.TRIAL_ALREADY_USED, reply_markup=plans_menu())
+            return
+
+        # пробный период — тоже новый человек на сервере
+        if not await can_buy(session, config, user, "plan"):
+            await safe_answer(callback)
+            await callback.message.answer(texts.CAPACITY_FULL, reply_markup=back_to_menu())
             return
 
         marzban_username = user.marzban_username or marzban_username_for(user.tg_id)

@@ -15,6 +15,7 @@ from bot.handlers.gift import GIFT_PAYLOAD_PREFIX, gift_paid, gift_purchase_erro
 from bot.keyboards import back_to_menu
 from bot.h1panel.client import H1PanelClient, H1PanelError
 from bot.plans import MAX_EXTRA_DEVICES, get_plan
+from bot.referrals import on_plan_paid
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -116,6 +117,7 @@ async def _plan_paid(message: Message, panel_client: H1PanelClient) -> None:
         session.add(_payment(user, plan.id, sp, "paid"))
         await session.commit()
         expires_at = subscription.expires_at
+        user_id = user.id
 
     await message.answer(
         texts.PAYMENT_SUCCESS.format(
@@ -124,6 +126,8 @@ async def _plan_paid(message: Message, panel_client: H1PanelClient) -> None:
         ),
         reply_markup=back_to_menu(keep_message=True),
     )
+    # засчитываем друга тому, кто пригласил (только первая оплата)
+    await on_plan_paid(message.bot, panel_client, user_id)
 
 
 async def _device_paid(message: Message, panel_client: H1PanelClient) -> None:

@@ -23,6 +23,7 @@ from bot.h1panel.client import H1PanelClient, H1PanelError
 from bot.keyboards import back_to_menu
 from bot.payments.platega import PlategaClient, PlategaError, PlategaPayment
 from bot.plans import Plan, get_plan
+from bot.referrals import on_plan_paid
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +167,7 @@ async def _fulfil_one(bot: Bot, panel_client: H1PanelClient, order_id: int) -> N
             )
         )
         tg_id = user.tg_id
+        user_id = user.id
         await session.commit()
         expires = subscription.expires_at.strftime("%d.%m.%Y")
 
@@ -175,6 +177,7 @@ async def _fulfil_one(bot: Bot, panel_client: H1PanelClient, order_id: int) -> N
         texts.PAYMENT_SUCCESS.format(expires=expires, key=key),
         reply_markup=back_to_menu(keep_message=True),
     )
+    await on_plan_paid(bot, panel_client, user_id)
 
 
 async def _notify(bot: Bot, tg_id: int, text: str, **kwargs) -> None:

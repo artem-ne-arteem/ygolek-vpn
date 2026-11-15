@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from aiogram import F, Router
-from aiogram.filters import Command, CommandStart
+from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.types import CallbackQuery, FSInputFile, Message
 from aiogram.types import User as TgUser
 
@@ -10,6 +10,7 @@ from bot.config import Config
 from bot.db.repo import get_active_subscription, get_or_create_user
 from bot.db.session import get_session
 from bot.keyboards import back_to_menu, main_menu
+from bot.referrals import attach_referrer
 from bot.telegram_utils import safe_answer, show_screen
 
 router = Router()
@@ -28,7 +29,13 @@ async def _menu_for(tg_user: TgUser, config: Config) -> tuple[str, object]:
 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message, config: Config) -> None:
+async def cmd_start(message: Message, config: Config, command: CommandObject) -> None:
+    # /start ref_<tg_id> — пришёл по реферальной ссылке
+    if command.args:
+        async with get_session() as session:
+            user = await get_or_create_user(session, message.from_user)
+            await attach_referrer(session, user, command.args)
+            await session.commit()
     text, markup = await _menu_for(message.from_user, config)
     await message.answer_photo(FSInputFile(START_IMAGE_PATH), caption=text, reply_markup=markup)
 

@@ -29,6 +29,10 @@ _NEW_COLUMNS = {
     "users": {
         "extra_devices": "INTEGER NOT NULL DEFAULT 0",
         "extra_devices_until": "TIMESTAMP NULL",
+        "referred_by": "INTEGER NULL",
+        "referral_counted": "BOOLEAN NOT NULL DEFAULT false",
+        "referral_friends": "INTEGER NOT NULL DEFAULT 0",
+        "referral_rewards": "INTEGER NOT NULL DEFAULT 0",
     },
     "subscriptions": {
         "reminder_3d_sent": "BOOLEAN NOT NULL DEFAULT false",

@@ -36,12 +36,12 @@ export function getPlan(id: string): Plan | undefined {
   return PLANS.find((p) => p.id === id);
 }
 
-export const TRIAL_DAYS = 3;
+export const TRIAL_DAYS = 7;
 export const TRIAL_TRAFFIC_GB = 5;
 
 export const TRIAL = {
-  // Пробный период временно выключен (как и TRIAL_ENABLED в bot/bot/plans.py)
-  enabled: false,
+  // Держи в синхроне с TRIAL_ENABLED / TRIAL_DAYS в bot/bot/plans.py
+  enabled: true,
   days: TRIAL_DAYS,
   trafficLabel: `${TRIAL_TRAFFIC_GB} ГБ`,
 };

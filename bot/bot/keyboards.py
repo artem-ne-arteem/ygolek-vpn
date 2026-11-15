@@ -25,6 +25,7 @@ def main_menu(has_subscription: bool = False, webapp_url: str = "") -> InlineKey
             builder.button(text="🎁 Пробный период", style=ButtonStyle.SUCCESS, callback_data="trial:activate")
         builder.button(text="💳 Купить подписку", style=ButtonStyle.SUCCESS, callback_data="plans:show")
     builder.button(text="🎁 Подарить подписку", style=ButtonStyle.PRIMARY, callback_data="gift:show")
+    builder.button(text="👥 Пригласить друзей", callback_data="ref:show")
     builder.button(text="📲 Как подключиться", callback_data="help:show")
     builder.button(text="📄 Документы", callback_data="legal:show")
     builder.button(text="🆘 Поддержка", url=SUPPORT_URL)
@@ -57,6 +58,18 @@ def card_payment_menu(url: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(text="💳 Перейти к оплате", style=ButtonStyle.SUCCESS, url=url)
     builder.button(text="⬅️ Меню", callback_data="menu:new")
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def referral_menu(link: str, share_text: str) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text="📤 Поделиться ссылкой",
+        style=ButtonStyle.PRIMARY,
+        url=f"https://t.me/share/url?url={quote(link, safe='')}&text={quote(share_text, safe='')}",
+    )
+    builder.button(text="⬅️ Меню", callback_data="menu:show")
     builder.adjust(1)
     return builder.as_markup()
 
