@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CardPayButton } from "@/components/CardPayButton";
 import { Icon } from "@/components/Icon";
+import { PaymentDataNote } from "@/components/PaymentDataNote";
 import { Reveal } from "@/components/Reveal";
 import { ActionCard, InfoTable, LinksCard, StatCard } from "@/components/ui";
 import { PRIVACY_URL, SUPPORT_URL, TERMS_URL } from "@/lib/links";
@@ -122,6 +123,7 @@ export default function Home() {
               <p className="mt-4 text-sm text-muted">
                 Продление добавляет дни к текущему сроку, ключ остаётся прежним — перенастраивать ничего не нужно.
               </p>
+              <PaymentDataNote className="mt-3 border-t border-line pt-3" />
             </section>
           </Reveal>
 

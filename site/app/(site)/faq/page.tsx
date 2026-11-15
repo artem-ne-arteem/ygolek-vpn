@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Icon, type IconName } from "@/components/Icon";
+import { PAYMENT_DATA_TEXT } from "@/components/PaymentDataNote";
 import { Reveal } from "@/components/Reveal";
 import { DEVICE_LIMIT, botDeepLink } from "@/lib/plans";
 import { SUPPORT_URL } from "@/lib/links";
@@ -44,7 +45,11 @@ const QUESTIONS = [
   },
   {
     q: "Как оплатить?",
-    a: "Telegram Stars — в боте или в личном кабинете на сайте. Звёзды покупаются прямо в Telegram.",
+    a: "Банковской картой или через СБП — на сайте, в мини-приложении и в боте. Или звёздами Telegram — в боте и в личном кабинете.",
+  },
+  {
+    q: "Какие данные собираются при оплате?",
+    a: PAYMENT_DATA_TEXT + " При оплате звёздами платёж проходит внутри Telegram, данные карты нам тоже не передаются.",
   },
 ];
 

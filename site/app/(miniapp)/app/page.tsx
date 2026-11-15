@@ -353,7 +353,7 @@ export default function MiniApp() {
       {/* Тариф и поддержка */}
       <section className="ma-card ma-divide">
         <Row icon="star" title={`${plan.title} — ${plan.priceRub} ₽ или ${plan.priceStars} ⭐`} text={`Безлимит трафика · до ${deviceLimit} устройств`} />
-        <Row icon="cart" title={`Оплатить картой — ${plan.priceRub} ₽`} text="Банковская карта или СБП" onClick={payByCard} />
+        <Row icon="cart" title={`Оплатить картой — ${plan.priceRub} ₽`} text="Банковская карта или СБП · Platega получит ваш Telegram ID и username" onClick={payByCard} />
         <Row icon="chat" title="Поддержка" text="@ygolek_support" onClick={openSupport} />
       </section>
     </Shell>

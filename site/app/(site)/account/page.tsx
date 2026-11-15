@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CardPayButton } from "@/components/CardPayButton";
 import { Icon, type IconName } from "@/components/Icon";
+import { PaymentDataNote } from "@/components/PaymentDataNote";
 import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 import { ActionCard, Chip, InfoTable, LinksCard, Logo, StatCard } from "@/components/ui";
 import { PRIVACY_URL, SUPPORT_URL, TERMS_URL } from "@/lib/links";
@@ -163,13 +164,14 @@ export default function AccountPage() {
                       <CardPayButton className="btn-ghost" />
                       {TRIAL.enabled && !me.trialUsed && !sub && (
                         <button onClick={activateTrial} disabled={busy === "trial"} className="btn-ghost">
-                          {busy === "trial" ? "Активируем…" : `Попробовать ${TRIAL.days} дня`}
+                          {busy === "trial" ? "Активируем…" : `Попробовать ${TRIAL.days} дней бесплатно`}
                         </button>
                       )}
                       <a href={botDeepLink()} target="_blank" rel="noreferrer" className="btn-ghost">
                         Открыть бота
                       </a>
                     </div>
+                    <PaymentDataNote className="mt-4 max-w-xl" />
                   </div>
                   <div className="rounded-xl border border-line bg-panel2/60 p-4 sm:min-w-[180px]">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Тариф</p>
